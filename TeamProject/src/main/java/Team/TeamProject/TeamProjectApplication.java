@@ -10,4 +10,6 @@ public class TeamProjectApplication {
 		SpringApplication.run(TeamProjectApplication.class, args);
 	}
 
+
+	// test 입니다.
 }
