@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>경산시 카페 정보 불러오기</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<h1>ajax로 경산시 카페 정보 불러오기 (10개)</h1>
+
+<button id=test>버튼</button>
+
+</body>
+</html>
+
+<script>
+    $('#test').on('click', function () {
+        var myurl = 'https://apis.data.go.kr/B553077/api/open/sdsc2/storeListInDong?serviceKey=MeKpYik6HKlwmVVBv4gbrrUo%2B51qkAPSIi2ySd5KcGJwMFyx6tOyso6AXxUoA69BCyzh2vF2mYrLNuweuV7pTg%3D%3D&pageNo=1&numOfRows=10&divId=signguCd&key=47290&indsSclsCd=I21201&type=json';
+        $.ajax({
+            url: myurl,
+            type: 'GET',
+            dataType:'json'
+        })
+            .done(function (r) {
+                console.log(r);
+                alert('성공');
+            }).fail(function (r) {
+            alert('실패');
+        });
+    });
+</script>
