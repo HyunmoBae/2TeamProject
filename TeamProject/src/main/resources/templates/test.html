@@ -1,37 +1,101 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
-
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>게시판</title>
+    <title>가게 리스트</title>
+    <meta charset="utf-8">
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            padding: 5px;
+        }
+    </style>
 </head>
-
 <body>
-<h1>게시판</h1>
-<table>
-    <thead>
-    <tr>
-        <th>번호</th>
-        <th>가게이름</th>
-        <th>가게코드</th>
-        <th>주소</th>
-        <th>도로명주소</th>
-        <th>x좌표</th>
-        <th>y좌표</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="cafe, status : ${cafeList}">
-        <td th:text="${status.index + 1}"></td>
-        <td th:text="${cafe.bizesNm}"></td>
-        <td th:text="${cafe.indsSclsCd}"></td>
-        <td th:text="${cafe.lnoAdr}"></td>
-        <td th:text="${cafe.rdnmAdr}"></td>
-        <td th:text="${cafe.lon}"></td>
-        <td th:text="${cafe.lat}"></td>
-    </tr>
-    </tbody>
-</table>
-</body>
+<!--<h1>가게 리스트</h1>-->
+<!--<table>-->
+<!--    <tr>-->
+<!--        <th>번호</th>-->
+<!--        <th>가게이름</th>-->
+<!--        <th>가게코드</th>-->
+<!--        <th>주소</th>-->
+<!--        <th>도로명주소</th>-->
+<!--        <th>x좌표</th>-->
+<!--        <th>y좌표</th>-->
+<!--    </tr>-->
+<!--    <tbody id="storeListBody">-->
+<!--    </tbody>-->
+<!--</table>-->
+<hr/>
 
+<h1>지도 부분 입니다.</h1>
+
+<div id="map" style="width:100%;height:350px;"></div>
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=406784a1fe10d8f90dc9afa5b43d84c9
+"></script>
+</body>
 </html>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+
+    var mapContainer = document.getElementById('map'); // 지도를 표시할 div
+    var mapOption = {
+        center: new kakao.maps.LatLng(37.56682, 126.97865), // 지도의 중심좌표 (서울시청 좌표)
+        level: 8 // 지도의 확대 레벨
+    };
+
+    var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+
+    // Geolocation API를 사용하여 사용자의 위치를 받아옵니다
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function (position) {
+            var latLng = new kakao.maps.LatLng(position.coords.latitude, position.coords.longitude);
+            map.setCenter(latLng); // 받아온 위치를 이용하여 지도의 중심 좌표를 설정합니다
+        });
+    }
+
+    $.ajax({
+        url: '/api',
+        type: 'GET',
+        dataType: 'json',
+        success: function (response) {
+            var storeList = response;
+
+            // 모든 x,y 값 추출
+            var positions = [];
+            for (var i = 0; i < storeList.length; i++) {
+                var store = storeList[i];
+                var latLng = new kakao.maps.LatLng(store.lat, store.lon);
+                positions.push(latLng);
+            }
+
+            // 마커 이미지 생성
+            var imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png';
+            var imageSize = new kakao.maps.Size(30, 30);
+            var imageOption = { offset: new kakao.maps.Point(15, 30) };
+            var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
+
+            // 모든 마커 생성
+            for (var i = 0; i < positions.length; i++) {
+                var marker = new kakao.maps.Marker({
+                    map: map,
+                    position: positions[i],
+                    image: markerImage
+                });
+            }
+
+            // 지도 확대,줌 최적화
+            var bounds = new kakao.maps.LatLngBounds();
+            for (var i = 0; i < positions.length; i++) {
+                bounds.extend(positions[i]);
+            }
+            map.setBounds(bounds);
+        },
+        error: function (xhr, status, error) {
+            console.log(xhr);
+            console.log(status);
+            console.log(error);
+        }
+    });
+</script>
