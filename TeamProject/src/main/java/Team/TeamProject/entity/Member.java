@@ -13,7 +13,7 @@ import javax.persistence.*;
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idx;
+    private Long member_idx;
 
     private String member_id; // 아이디
     private String member_pw; // 패스워드

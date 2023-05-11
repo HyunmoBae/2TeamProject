@@ -15,7 +15,7 @@ import javax.persistence.*;
 public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idx;
+    private Long board_idx;
 
     private String title; // 글 제목
     private String contents; // 글 내용

@@ -15,12 +15,25 @@ import javax.persistence.Id;
 @Data
 @Builder
 @Entity
-public class MemberAddress {
+public class Map {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long memberaddress_idx;
+    private Long map_idx;
 
-    private String address; //주소
-    private int zonecode; //우편번호
-    private String detailedaddress; //상세주소
+    String opnSfTeamCode;
+    String updateGbn;
+    String updateDt;
+    String opnSvcNm;
+    String uptaeNm;
+    String bplcNm;
+    String siteWhlAddr;
+    String rdnPostNo;
+    String rdnWhlAddr;
+    String apvPermYmd;
+    String apvCancelYmd;
+    String dcbYmd;
+    String dtlStateNm;
+    String x;
+    String y;
+    String siteTel;
 }

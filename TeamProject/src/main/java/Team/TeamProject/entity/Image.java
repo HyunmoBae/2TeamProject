@@ -15,7 +15,7 @@ import javax.persistence.*;
 public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idx;
+    private Long image_idx;
 
     private String imgName; // 이미지 원본 이름
     private String imgPath; // 이미지 파일 경로
