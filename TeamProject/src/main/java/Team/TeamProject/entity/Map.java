@@ -15,7 +15,8 @@ import javax.persistence.Id;
 @Data
 @Builder
 @Entity
-public class Map {
+public class Map extends BaseEntity {
+    // 지도 정보 테이블
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long map_idx;

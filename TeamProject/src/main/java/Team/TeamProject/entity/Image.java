@@ -12,7 +12,8 @@ import javax.persistence.*;
 @Data
 @Builder
 @Entity
-public class Image {
+public class Image extends BaseEntity {
+    // 이미지 정보 테이블
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long image_idx;
