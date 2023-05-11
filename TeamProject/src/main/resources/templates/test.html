@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>가게 리스트</title>
     <meta charset="utf-8">
@@ -12,20 +12,21 @@
     </style>
 </head>
 <body>
-<!--<h1>가게 리스트</h1>-->
-<!--<table>-->
-<!--    <tr>-->
-<!--        <th>번호</th>-->
-<!--        <th>가게이름</th>-->
-<!--        <th>가게코드</th>-->
-<!--        <th>주소</th>-->
-<!--        <th>도로명주소</th>-->
-<!--        <th>x좌표</th>-->
-<!--        <th>y좌표</th>-->
-<!--    </tr>-->
-<!--    <tbody id="storeListBody">-->
-<!--    </tbody>-->
-<!--</table>-->
+<h1>안녕하세요. 리스트 출력 실험입니다.</h1>
+<h2>테섹스스트</h2>
+<table>
+    <thead>
+    <td>번호</td>
+    <td>이름</td>
+    <td>상권번호</td>
+    <td>주소</td>
+    <td>도로명주소</td>
+    </thead>
+    <tbody id="storeListBody">
+
+    </tbody>
+</table>
+
 <hr/>
 
 <h1>지도 부분 입니다.</h1>
@@ -73,7 +74,7 @@
             // 마커 이미지 생성
             var imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png';
             var imageSize = new kakao.maps.Size(30, 30);
-            var imageOption = { offset: new kakao.maps.Point(15, 30) };
+            var imageOption = {offset: new kakao.maps.Point(15, 30)};
             var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
 
             // 모든 마커 생성
@@ -91,6 +92,19 @@
                 bounds.extend(positions[i]);
             }
             map.setBounds(bounds);
+
+            var tbody = document.getElementById("storeListBody");
+            tbody.innerHTML = "";
+            for (var i = 0; i < storeList.length; i++) {
+                var store = storeList[i];
+                var tr = document.createElement("tr");
+                tr.innerHTML = "<td>" + (i + 1) + "</td>" +
+                    "<td>" + store.bizesNm + "</td>" +
+                    "<td>" + store.indsSclsNm + "</td>" +
+                    "<td>" + store.lnoAdr + "</td>" +
+                    "<td>" + store.rdnmAdr + "</td>";
+                tbody.appendChild(tr);
+            }
         },
         error: function (xhr, status, error) {
             console.log(xhr);

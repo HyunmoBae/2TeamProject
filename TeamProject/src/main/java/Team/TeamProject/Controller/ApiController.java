@@ -21,15 +21,23 @@ import java.util.List;
 public class ApiController {
 
     @GetMapping("/api")
-    public List<Store> callApi(Model model) throws IOException, ParseException {
+    // 상권 별 해당업종 검색
+    // 여기서는 하양역 (10351) 상권 , 카페 (I21201) 업종을 가진 모든 가게 검색
+    public List<Store> callApi() throws IOException, ParseException {
         List<Store> storeList = new ArrayList<>();
 
         String urlStr = "http://apis.data.go.kr/B553077/api/open/sdsc2/storeListInArea?" +
+                // 인증키
                 "&serviceKey=MeKpYik6HKlwmVVBv4gbrrUo%2B51qkAPSIi2ySd5KcGJwMFyx6tOyso6AXxUoA69BCyzh2vF2mYrLNuweuV7pTg%3D%3D" +
+                // 페이지 갯수
                 "&pageNo=1" +
+                // 로딩할 데이터 갯수
                 "&numOfRows=100" +
+                // 상권코드
                 "&key=10351" +
+                // 업종코드
                 "&indsSclsCd=I21201" +
+                // 데이터 타입
                 "&type=json";
 
         URL url = new URL(urlStr);
@@ -63,7 +71,9 @@ public class ApiController {
             storeList.add(store);
         }
 
-        model.addAttribute("storeList",storeList);
+        System.out.println("API 호출 **");
+        System.out.println("storeList 확인용 ---" + storeList);
+//        담겨져 있음. (stroreList)
 
         return storeList;
     }
