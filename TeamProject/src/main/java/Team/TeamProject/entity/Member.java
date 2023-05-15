@@ -40,7 +40,7 @@ public class Member extends BaseEntity {
         member.setPassword(password);
         member.setName(memberDto.getName());
         member.setEmail(memberDto.getEmail());
-        member.setNick(memberDto.getEmail());
+        member.setNick(memberDto.getNick());
         member.setPhoneNumber(memberDto.getPhoneNumber());
         member.setMemberAddress(memberAddress);
         member.setRole(Role.ADMIN);

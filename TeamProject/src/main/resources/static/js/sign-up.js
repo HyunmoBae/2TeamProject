@@ -1,26 +1,25 @@
+let emailCheck = true;
+let passwordCheck = true;
+let phoneNumberCheck = true;
 $("#id").keyup(function () {
-  var id = $(this).val();
-  if (id == " ") {
-    $("#id").attr("class", "form-control mb-2");
-    $("#id_fail").hide();
-    $("#id_success").hide();
-  }
   $.ajax({
     type: "post",
     url: "/sign/id_check",
     data: { id: $("#id").val() },
     dataType: "json",
     success: function (res) {
-      if (res.message === "사용 가능한 아이디입니다.") {
+      if (res.message === "빈 값입니다."){
+        $("#id").attr("class", "form-control mb-2");
+        $("#id_fail").hide();
+        $("#id_success").hide();
+      } else if (res.message === "사용 가능한 아이디입니다.") {
         $("#id").attr("class", "form-control mb-2 is-valid");
         $("#id_success").show();
         $("#id_fail").hide();
-        console.log(res.message);
       } else {
         $("#id").attr("class", "form-control mb-2 is-invalid");
         $("#id_success").hide();
         $("#id_fail").show();
-        console.log(res.message);
       }
     },
     error: function (request, status, error) {
@@ -39,16 +38,19 @@ $("#password").keyup(function() {
         $("#repeatpassword").attr("class", "form-control");
         $("#password_fail").hide();
         $("#password_success").hide();
+        passwordCheck = true;
     }
     else if (rePwd == pwd) {//비밀번호 같다면
         $("#repeatpassword").attr("class", "form-control is-valid");
         $("#password_success").show();
         $("#password_fail").hide();
+        passwordCheck = false;
     } 
     else if (rePwd != pwd){//비밀번호 다르다면
         $("#repeatpassword").attr("class", "form-control is-invalid");
         $("#password_success").hide();
         $("#password_fail").show();
+        passwordCheck = true;
     }
 });
 
@@ -60,42 +62,41 @@ $("#repeatpassword").keyup(function() {
         $("#repeatpassword").attr("class", "form-control");
         $("#password_fail").hide();
         $("#password_success").hide();
+        passwordCheck = true;
     }
     else if (rePwd == pwd) {//비밀번호 같다면
         $("#repeatpassword").attr("class", "form-control is-valid");
         $("#password_success").show();
         $("#password_fail").hide();
+        passwordCheck = false;
     } 
     else if (rePwd != pwd){//비밀번호 다르다면
         $("#repeatpassword").attr("class", "form-control is-invalid");
         $("#password_success").hide();
         $("#password_fail").show();
+        passwordCheck = true;
     }
 });
 
 $("#nick").keyup(function () {
-  var nick = $(this).val();
-  if (nick == " ") {
-    $("#nick").attr("class", "form-control mb-2");
-    $("#nick_fail").hide();
-    $("#nick_success").hide();
-  }
   $.ajax({
     type: "post",
     url: "/sign/nick_check",
     data: { nick: $("#nick").val() },
     dataType: "json",
     success: function (res) {
-      if (res.message === "사용 가능한 닉네임입니다.") {
+      if (res.message === "빈 값입니다.") {
+        $("#nick").attr("class", "form-control mb-2");
+        $("#nick_fail").hide();
+        $("#nick_success").hide();
+      } else if (res.message === "사용 가능한 닉네임입니다.") {
         $("#nick").attr("class", "form-control mb-2 is-valid");
         $("#nick_success").show();
         $("#nick_fail").hide();
-        console.log(res.message);
       } else {
         $("#nick").attr("class", "form-control mb-2 is-invalid");
         $("#nick_success").hide();
         $("#nick_fail").show();
-        console.log(res.message);
       }
     },
     error: function (request, status, error) {
@@ -113,41 +114,60 @@ $("#email").keyup(function() {
     if (e == "") {
         $("#email").attr("class", "form-control mb-2");
         $("#Email_fail").hide();
+        emailCheck = true;
     }
     else if (reg.test(e)) {//정규표현식을 통과 한다면
         $("#email").attr("class", "form-control mb-2 is-valid");
         $("#Email_fail").hide();
+        emailCheck = false;
     } 
     else {//정규표현식을 통과하지 못하면
         $("#email").attr("class", "form-control mb-2 is-invalid");
         $("#Email_fail").show();
+        emailCheck = true;
     }
 });
 
 $("#phoneNumber").keyup(function() {
     let n = $(this).val();
-    let reg = /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/;
+    let reg = /^01([0|1|6|7|8|9])?([0-9]{3,4})?([0-9]{4})$/;
     // 전화번호 검증할 정규 표현식
     if (n == "") {
         $("#phoneNumber").attr("class", "form-control mb-2");
         $("#number_fail").hide();
+        phoneNumberCheck = true;
     }
     else if (reg.test(n)) {//정규표현식을 통과 한다면
         $("#phoneNumber").attr("class", "form-control mb-2 is-valid");
         $("#number_fail").hide();
+        phoneNumberCheck = false;
     } 
     else {//정규표현식을 통과하지 못하면
         $("#phoneNumber").attr("class", "form-control mb-2 is-invalid");
         $("#number_fail").show();
+        phoneNumberCheck = true;
     }
 });
 
 $("#signupbutton").click(function() {
+    if(passwordCheck) {
+        alert("비밀번호와 일치하지 않습니다. 다시 입력해 주세요.");
+        return;
+    }
+    if(emailCheck) {
+        alert("올바른 이메일 형식이 아닙니다. 다시 입력해 주세요.");
+        return;
+    }
+    if(phoneNumberCheck) {
+        alert("올바르지 않은 전화번호 형식입니다. 다시 입력해주세요.");
+        return;
+    }
     var memberDto = {
         "id": $("#id").val(),
         "password": $("#password").val(),
         "name": $("#name").val(),
         "email": $("#email").val(),
+        "nick": $("#nick").val(),
         "phoneNumber": $("#phoneNumber").val(),
         "memberAddressDto": {
             "address": $("#address").val(),

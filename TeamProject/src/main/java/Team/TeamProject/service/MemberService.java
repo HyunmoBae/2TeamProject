@@ -31,7 +31,8 @@ public class MemberService implements UserDetailsService {
     /**
      * 회원가입
      */
-    private Member createMember(MemberDto memberDto) {
+    public Member createMember(MemberDto memberDto) {
+        nullCheckMember(memberDto);
         validateDuplicateMember(memberDto);
         MemberAddressDto memberAddressDto = memberDto.getMemberAddressDto();
         MemberAddress memberAddress = MemberAddress.toMemberAddress(memberAddressDto);
@@ -62,6 +63,31 @@ public class MemberService implements UserDetailsService {
             throw new DuplicateKeyException("이미 사용 중인 닉네임입니다");
         }
     }
+
+    /**
+     * 빈 값 확인
+     */
+    private void nullCheckMember(MemberDto memberDto) throws DuplicateKeyException {
+        if(memberDto.getId().isBlank()){
+            throw new DuplicateKeyException("아이디를 입력하세요.");
+        }
+        if(memberDto.getPassword().isBlank()){
+            throw new DuplicateKeyException("비밀번호를 입력하세요.");
+        }
+        if(memberDto.getName().isBlank()){
+            throw new DuplicateKeyException("이름을 입력하세요.");
+        }
+        if(memberDto.getEmail().isBlank()){
+            throw new DuplicateKeyException("이메일을 입력하세요.");
+        }
+        if(memberDto.getNick().isBlank()){
+            throw new DuplicateKeyException("닉네임를 입력하세요.");
+        }
+        if(memberDto.getPhoneNumber().isBlank()){
+            throw new DuplicateKeyException("전화번호를 입력하세요.");
+        }
+    }
+
 
     /**
      * 중복되는 아이디 검사
