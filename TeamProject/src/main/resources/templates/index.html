@@ -1,31 +1,209 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>경산시 카페 정보 불러오기</title>
+    <meta charset="utf-8">
+    <title>Main</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-<h1>ajax로 경산시 카페 정보 불러오기 (10개)</h1>
+<h1>상권정보 확인 웹</h1>
 
-<button id=test>버튼</button>
 
+<button onclick="showCafeMarkers()">하양읍 카페 마커 찍기</button>
+<button onclick="showCafeMarkers2()">경산시 카페 마커 찍기</button>
+<button onclick="getCurrentPosition()">현재위치</button>
+<!--구현X-->
+<button onclick="removeMarker()">마커 없애기</button>
+<!---->
+<div id="map" style="width:100%;height:350px;"></div>
+<hr/>
+<h1>안녕하세요. 리스트 출력 실험입니다.</h1>
+<h2>테스트</h2>
+<table>
+  <thead>
+  <td>번호</td>
+  <td>이름</td>
+  <td>상권번호</td>
+  <td>주소</td>
+  <td>도로명주소</td>
+  </thead>
+  <tbody id="storeListBody">
+
+  </tbody>
+</table>
+
+<hr/>
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=406784a1fe10d8f90dc9afa5b43d84c9"></script>
+<script>
+    var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+        mapOption = {
+            center: new kakao.maps.LatLng(35.871421676524584, 128.60180853912308), // 지도의 중심좌표
+            level: 5 // 지도의 확대 레벨
+        };
+
+    var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+
+    function getCurrentPosition() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition);
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+    }
+
+    function showPosition(position) {
+        var lat = position.coords.latitude; // 위도
+        var lon = position.coords.longitude; // 경도
+
+        var locPosition = new kakao.maps.LatLng(lat, lon); // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
+        var message = '<div style="padding:5px;">사용자 위치</div>'; // 인포윈도우에 표시될 내용입니다
+
+        // 마커와 인포윈도우를 표시합니다
+        displayMarker(locPosition, message);
+    }
+
+    function displayMarker(locPosition, message) {
+        // 마커를 생성합니다
+        var marker = new kakao.maps.Marker({
+            map: map,
+            position: locPosition
+        });
+
+        var iwContent = message; // 인포윈도우에 표시할 내용
+        var iwRemoveable = true;
+
+        // 인포윈도우를 생성합니다
+        var infowindow = new kakao.maps.InfoWindow({
+            content: iwContent,
+            removable: iwRemoveable
+        });
+
+        // 인포윈도우를 마커위에 표시합니다
+        infowindow.open(map, marker);
+
+        // 지도 중심좌표를 접속위치로 변경합니다
+        map.setCenter(locPosition);
+    }
+
+    function showCafeMarkers() {
+        $.ajax({
+            url: '/api',
+            type: 'GET',
+            dataType: 'json',
+            success: function (response) {
+                var storeList = response;
+
+                // 모든 x,y 값 추출
+                var positions = [];
+                for (var i = 0; i < storeList.length; i++) {
+                    var store = storeList[i];
+                    var latLng = new kakao.maps.LatLng(store.lat, store.lon);
+                    positions.push(latLng);
+                }
+
+                // 마커 이미지 생성
+                var imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png';
+                var imageSize = new kakao.maps.Size(30, 30);
+                var imageOption = {offset: new kakao.maps.Point(15, 30)};
+                var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
+
+                // 모든 마커 생성
+                for (var i = 0; i < positions.length; i++) {
+                    var marker = new kakao.maps.Marker({
+                        map: map,
+                        position: positions[i],
+                        image: markerImage
+                    });
+                }
+
+                // 지도 확대,줌 최적화
+                var bounds = new kakao.maps.LatLngBounds();
+                for (var i = 0; i < positions.length; i++) {
+                    bounds.extend(positions[i]);
+                }
+                map.setBounds(bounds);
+
+                var tbody = document.getElementById("storeListBody");
+                tbody.innerHTML = "";
+                for (var i = 0; i < storeList.length; i++) {
+                    var store = storeList[i];
+                    var tr = document.createElement("tr");
+                    tr.innerHTML = "<td>" + (i + 1) + "</td>" +
+                        "<td>" + store.bizesNm + "</td>" +
+                        "<td>" + store.indsSclsNm + "</td>" +
+                        "<td>" + store.lnoAdr + "</td>" +
+                        "<td>" + store.rdnmAdr + "</td>";
+                    tbody.appendChild(tr);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log(xhr);
+                console.log(status);
+                console.log(error);
+            }
+        });
+    }
+
+    function showCafeMarkers2() {
+        $.ajax({
+            url: '/CafeApi',
+            type: 'GET',
+            dataType: 'json',
+            success: function (response) {
+                var storeList = response;
+
+                // 모든 x,y 값 추출
+                var positions = [];
+                for (var i = 0; i < storeList.length; i++) {
+                    var store = storeList[i];
+                    var latLng = new kakao.maps.LatLng(store.lat, store.lon);
+                    positions.push(latLng);
+                }
+
+                // 마커 이미지 생성
+                var imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png';
+                var imageSize = new kakao.maps.Size(30, 30);
+                var imageOption = {offset: new kakao.maps.Point(15, 30)};
+                var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
+
+                // 모든 마커 생성
+                for (var i = 0; i < positions.length; i++) {
+                    var marker = new kakao.maps.Marker({
+                        map: map,
+                        position: positions[i],
+                        image: markerImage
+                    });
+                }
+
+                // 지도 확대,줌 최적화
+                var bounds = new kakao.maps.LatLngBounds();
+                for (var i = 0; i < positions.length; i++) {
+                    bounds.extend(positions[i]);
+                }
+                map.setBounds(bounds);
+
+                var tbody = document.getElementById("storeListBody");
+                tbody.innerHTML = "";
+                for (var i = 0; i < storeList.length; i++) {
+                    var store = storeList[i];
+                    var tr = document.createElement("tr");
+                    tr.innerHTML = "<td>" + (i + 1) + "</td>" +
+                        "<td>" + store.bizesNm + "</td>" +
+                        "<td>" + store.indsSclsNm + "</td>" +
+                        "<td>" + store.lnoAdr + "</td>" +
+                        "<td>" + store.rdnmAdr + "</td>";
+                    tbody.appendChild(tr);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log(xhr);
+                console.log(status);
+                console.log(error);
+            }
+        });
+    }
+
+
+</script>
 </body>
 </html>
-
-<script>
-    $('#test').on('click', function () {
-        var myurl = 'https://apis.data.go.kr/B553077/api/open/sdsc2/storeListInDong?serviceKey=MeKpYik6HKlwmVVBv4gbrrUo%2B51qkAPSIi2ySd5KcGJwMFyx6tOyso6AXxUoA69BCyzh2vF2mYrLNuweuV7pTg%3D%3D&pageNo=1&numOfRows=10&divId=signguCd&key=47290&indsSclsCd=I21201&type=json';
-        $.ajax({
-            url: myurl,
-            type: 'GET',
-            dataType:'json'
-        })
-            .done(function (r) {
-                console.log(r);
-                alert('성공');
-            }).fail(function (r) {
-            alert('실패');
-        });
-    });
-</script>

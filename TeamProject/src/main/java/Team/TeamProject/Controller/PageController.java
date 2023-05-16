@@ -24,8 +24,8 @@ public class PageController {
         return "test";
     }
 
-    @GetMapping("/main")
-    public String main2Proc() {
-        return "main";
+    @GetMapping("/place")
+    public String placeProc() {
+        return "place";
     }
 }
