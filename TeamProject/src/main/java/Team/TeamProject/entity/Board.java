@@ -24,6 +24,6 @@ public class Board extends BaseEntity {
     private int hit; // 조회수
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_idx")
+    @JoinColumn(name = "Member")
     private Member member;
 }

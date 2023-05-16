@@ -27,7 +27,7 @@ public class Member extends BaseEntity {
 
     @ToString.Exclude
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "member_address")
+    @JoinColumn(name = "MemberAddress")
     private MemberAddress memberAddress; //상세주소
 
     @Enumerated(EnumType.STRING)
