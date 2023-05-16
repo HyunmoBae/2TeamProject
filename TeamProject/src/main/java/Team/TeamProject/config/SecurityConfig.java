@@ -26,7 +26,7 @@ public class SecurityConfig {
                 .and()
                 .logout()
                 .logoutRequestMatcher(new AntPathRequestMatcher("/sign/logout"))
-                .logoutSuccessUrl("/")
+//                .logoutSuccessUrl("/")
                 .and();
 
         http.authorizeRequests()
