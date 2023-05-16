@@ -29,11 +29,11 @@ public class Store {
     // 도로명 주소
     private String rdnmAdr;
     // 경도 (x값)
-    private Double lon;
+    private double lon;
     // 위도 (y값)
-    private Double lat;
+    private double lat;
 
-    public Store(String bizesNm, String indsSclsNm, String lnoAdr, String rdnmAdr, Double lon, Double lat) {
+    public Store(String bizesNm, String indsSclsNm, String lnoAdr, String rdnmAdr, double lon, double lat) {
         this.bizesNm = bizesNm;
         this.indsSclsNm = indsSclsNm;
         this.lnoAdr = lnoAdr;

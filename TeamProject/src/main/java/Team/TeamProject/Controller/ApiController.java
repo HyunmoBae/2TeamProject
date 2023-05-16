@@ -83,7 +83,7 @@ public class ApiController {
 
     @GetMapping("/CafeApi")
     // 상권 별 해당업종 검색
-    // 여기서는 하양역 (10351) 상권 , 카페 (I21201) 업종을 가진 모든 가게 검색
+    // 여기서는 경산시 (47290) 상권 , 카페 (I21201) 업종을 가진 모든 가게 검색
     public List<Store> callApi2() throws IOException, ParseException {
         List<Store> storeList = new ArrayList<>();
 

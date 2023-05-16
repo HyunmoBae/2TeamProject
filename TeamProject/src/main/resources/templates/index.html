@@ -142,9 +142,12 @@
                 console.log(error);
             }
         });
+
+
     }
 
     function showCafeMarkers2() {
+        // 경산시 카페
         $.ajax({
             url: '/CafeApi',
             type: 'GET',
@@ -201,6 +204,16 @@
                 console.log(error);
             }
         });
+
+    }
+
+    function removeMarker() {
+        // 마커를 모두 제거합니다
+        map.removeMarkers();
+
+        // 리스트 테이블의 내용을 초기화합니다
+        var tbody = document.getElementById("storeListBody");
+        tbody.innerHTML = "";
     }
 
 
