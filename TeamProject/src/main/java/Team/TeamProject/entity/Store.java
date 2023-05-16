@@ -15,7 +15,7 @@ import javax.persistence.Id;
 @Data
 @Builder
 @Entity
-public class Map {
+public class Store {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long store_idx;
