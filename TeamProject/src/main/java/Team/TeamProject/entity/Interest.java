@@ -12,16 +12,14 @@ import javax.persistence.*;
 @Data
 @Builder
 @Entity
-public class Board extends BaseEntity {
-    // 게시판 테이블
+public class Interest extends BaseEntity {
+    // 관심 테이블
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long board_idx;
+    private Long interest_idx;
 
-    private String title; // 글 제목
-    private String contents; // 글 내용
-    private String category; // 카테고리
-    private int hit; // 조회수
+    @Column(nullable = false)
+    private boolean status;  // true = 관심, false = 관심x
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_idx")
