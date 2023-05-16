@@ -11,8 +11,6 @@
 
 <button onclick="showCafeMarkers()">하양읍 카페 마커 찍기</button>
 <button onclick="showCafeMarkers2()">경산시 카페 마커 찍기</button>
-<button onclick="showCafeMarkers3()">대구광역시 동구 카페 마커 찍기</button>
-
 <button onclick="getCurrentPosition()">현재위치</button>
 <!--구현X-->
 <button onclick="removeMarker()">마커 없애기</button>
@@ -152,68 +150,6 @@
         // 경산시 카페
         $.ajax({
             url: '/CafeApi',
-            type: 'GET',
-            dataType: 'json',
-            success: function (response) {
-                var storeList = response;
-
-                // 모든 x,y 값 추출
-                var positions = [];
-                for (var i = 0; i < storeList.length; i++) {
-                    var store = storeList[i];
-                    var latLng = new kakao.maps.LatLng(store.lat, store.lon);
-                    positions.push(latLng);
-                }
-
-                // 마커 이미지 생성
-                var imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png';
-                var imageSize = new kakao.maps.Size(30, 30);
-                var imageOption = {offset: new kakao.maps.Point(15, 30)};
-                var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
-
-                // 모든 마커 생성
-                for (var i = 0; i < positions.length; i++) {
-                    var marker = new kakao.maps.Marker({
-                        map: map,
-                        position: positions[i],
-                        image: markerImage
-                    });
-                }
-
-                // 지도 확대,줌 최적화
-                var bounds = new kakao.maps.LatLngBounds();
-                for (var i = 0; i < positions.length; i++) {
-                    bounds.extend(positions[i]);
-                }
-                map.setBounds(bounds);
-
-                var tbody = document.getElementById("storeListBody");
-                tbody.innerHTML = "";
-                for (var i = 0; i < storeList.length; i++) {
-                    var store = storeList[i];
-                    var tr = document.createElement("tr");
-                    tr.innerHTML = "<td>" + (i + 1) + "</td>" +
-                        "<td>" + store.bizesNm + "</td>" +
-                        "<td>" + store.indsSclsNm + "</td>" +
-                        "<td>" + store.lnoAdr + "</td>" +
-                        "<td>" + store.rdnmAdr + "</td>";
-                    tbody.appendChild(tr);
-                }
-            },
-            error: function (xhr, status, error) {
-                console.log(xhr);
-                console.log(status);
-                console.log(error);
-            }
-        });
-
-    }
-
-    // 동구 카페 찍기.
-    function showCafeMarkers3() {
-        // 경산시 카페
-        $.ajax({
-            url: '/CafeApi2',
             type: 'GET',
             dataType: 'json',
             success: function (response) {
