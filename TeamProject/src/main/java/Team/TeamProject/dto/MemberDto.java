@@ -16,7 +16,7 @@ public class MemberDto {
     private Role role; // 관리자 or 사용자
     private MemberAddressDto memberAddressDto;
 
-    public static MemberDto toMemberDto(Member member, MemberAddressDto memberAddressDto) {
+    public static MemberDto toMemberDto(Member member) {
         MemberDto memberDto = new MemberDto();
         memberDto.setId(member.getId());
         memberDto.setPassword(member.getPassword());
@@ -24,7 +24,7 @@ public class MemberDto {
         memberDto.setEmail(member.getEmail());
         memberDto.setNick(member.getNick());
         memberDto.setPhoneNumber(member.getPhoneNumber());
-        memberDto.setMemberAddressDto(memberAddressDto);
+        memberDto.setMemberAddressDto(MemberAddressDto.toMemberAddressDto(member.getMemberAddress()));
         memberDto.setRole(member.getRole());
         return memberDto;
     }

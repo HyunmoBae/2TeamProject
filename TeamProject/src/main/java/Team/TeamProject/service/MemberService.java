@@ -67,24 +67,24 @@ public class MemberService implements UserDetailsService {
     /**
      * 빈 값 확인
      */
-    private void nullCheckMember(MemberDto memberDto) throws DuplicateKeyException {
+    private void nullCheckMember(MemberDto memberDto) throws IllegalArgumentException {
         if(memberDto.getId().isBlank()){
-            throw new DuplicateKeyException("아이디를 입력하세요.");
+            throw new IllegalArgumentException("아이디를 입력하세요.");
         }
         if(memberDto.getPassword().isBlank()){
-            throw new DuplicateKeyException("비밀번호를 입력하세요.");
+            throw new IllegalArgumentException("비밀번호를 입력하세요.");
         }
         if(memberDto.getName().isBlank()){
-            throw new DuplicateKeyException("이름을 입력하세요.");
+            throw new IllegalArgumentException("이름을 입력하세요.");
         }
         if(memberDto.getEmail().isBlank()){
-            throw new DuplicateKeyException("이메일을 입력하세요.");
+            throw new IllegalArgumentException("이메일을 입력하세요.");
         }
         if(memberDto.getNick().isBlank()){
-            throw new DuplicateKeyException("닉네임를 입력하세요.");
+            throw new IllegalArgumentException("닉네임를 입력하세요.");
         }
         if(memberDto.getPhoneNumber().isBlank()){
-            throw new DuplicateKeyException("전화번호를 입력하세요.");
+            throw new IllegalArgumentException("전화번호를 입력하세요.");
         }
     }
 
@@ -98,11 +98,34 @@ public class MemberService implements UserDetailsService {
     }
 
     /**
-     * 중복되는 아이디 검사
+     * 중복되는 닉네임 검사
      */
     public boolean isNickExists(String nick) {
         Optional<Member> findNick = memberRepository.findByNick(nick);
         return findNick.isPresent();
+    }
+
+    /**
+     * 비밀번호 확인
+     */
+    public boolean checkPassword(String id, String password) {
+        Optional<Member> memberOptional = memberRepository.findById(id);
+        if(!memberOptional.isPresent()) {
+            throw new UsernameNotFoundException(id);
+        }
+        Member member = memberOptional.get();
+        String memberPassword = member.getPassword();
+        boolean matches = passwordEncoder.matches(password, memberPassword);
+        return matches;
+    }
+
+    /**
+     * 비밀번호 공백 체크
+     */
+    public void nullCheckPw(String password) throws IllegalArgumentException {
+        if (password.isBlank()) {
+            throw new IllegalArgumentException("비밀번호를 입력하세요");
+        }
     }
 
     /**

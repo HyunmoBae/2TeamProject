@@ -47,15 +47,13 @@ public class MemberController {
      */
     @PostMapping("/register")
     public ResponseEntity<?> saveMember(@RequestBody MemberDto memberDto, HttpServletResponse response) {
-        log.info("memberDto: {}", memberDto);
-        if(memberDto.getId().isBlank()){
-            log.info("-------------------null--------------------");
-        }
         try {
             Member saveMember = memberService.createMember(memberDto);
             response.sendRedirect("/sign/sign-in");
             return ResponseEntity.ok(saveMember);
         } catch (DuplicateKeyException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Redirect Error");
@@ -105,7 +103,7 @@ public class MemberController {
     @PostMapping("/nick_check")
     public ResponseEntity<Map<String, Object>> checkNick(@RequestParam String nick) {
         Map<String, Object> response = new HashMap<>();
-        boolean isExists = memberService.isIdExists(nick);
+        boolean isExists = memberService.isNickExists(nick);
         if(nick.isBlank()) {
             response.put("message", "빈 값입니다.");
         } else if (isExists) {
