@@ -18,8 +18,8 @@ public class Store extends BaseEntity {
 
     private String opnSfTeamCode; //개방자치단체코드
     private String updateDt; //데이터 갱신일자
-    private String opnSvcNm	; //개방서비스명
-    private String uptaeNm	; //업태구분명
+    private String opnSvcNm; //개방서비스명
+    private String uptaeNm; //업태구분명
     private String bplcNm; //사업장명
     private String siteWhlAddr; //지번주소
     private String rdnPostNo; //도로명 우편번호
