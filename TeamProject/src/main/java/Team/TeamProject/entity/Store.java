@@ -32,11 +32,6 @@ public class Store extends BaseEntity {
 
     @ToString.Exclude
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "Map")
-    private Map map; // 위도, 경도
-
-    @ToString.Exclude
-    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "Interest")
     private Interest interest; //관심
 }
