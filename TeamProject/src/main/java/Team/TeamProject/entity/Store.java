@@ -30,10 +30,6 @@ public class Store extends BaseEntity {
     private String newZipcd; //신우편번호
     private String flrNo; //층정보
 
-    @ToString.Exclude
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "Map")
-    private Map map; // 위도, 경도
 
     @ToString.Exclude
     @OneToOne(fetch = FetchType.EAGER)
