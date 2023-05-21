@@ -109,14 +109,18 @@ public class MemberService implements UserDetailsService {
      * 비밀번호 확인
      */
     public boolean checkPassword(String id, String password) {
+        log.info("checkid = {}", id);
+        log.info("checkPassword = {}", password);
         Optional<Member> memberOptional = memberRepository.findById(id);
-        if(!memberOptional.isPresent()) {
-            throw new UsernameNotFoundException(id);
+        if (!memberOptional.isPresent()) {
+            throw new IllegalArgumentException("사용자를 찾을 수 업습니다.");
         }
         Member member = memberOptional.get();
         String memberPassword = member.getPassword();
-        boolean matches = passwordEncoder.matches(password, memberPassword);
-        return matches;
+        log.info("checkMember = {}", member);
+        log.info("memberPassword = {}", memberPassword);
+        boolean passwordMatches = passwordEncoder.matches(password, memberPassword);
+        return passwordMatches;
     }
 
     /**

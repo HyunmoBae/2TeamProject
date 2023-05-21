@@ -3,6 +3,7 @@ package Team.TeamProject.controller;
 import Team.TeamProject.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.jta.UserTransactionAdapter;
@@ -30,9 +31,19 @@ public class MemberProfileController {
      * 비밀번호 체크
      */
     @PostMapping("/checkPw")
-    public boolean checkPassword(Principal principal, @RequestBody String password) {
+    public ResponseEntity<Boolean> checkPassword(Principal principal, @RequestBody String password) {
         String id = principal.getName();
-        boolean checkPassword = memberService.checkPassword(id, password);
-        return checkPassword;
+        log.info("id = {}", id);
+        log.info("password = {}", password);
+        boolean passwordMatches = memberService.checkPassword(id, password);
+        return ResponseEntity.ok(passwordMatches);
+    }
+
+    /**
+     * 비밀번호 변경 페이지
+     */
+    @GetMapping("/change-password")
+    public String changePwView() {
+        return "/profile/change-password";
     }
 }
