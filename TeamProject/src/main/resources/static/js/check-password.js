@@ -19,7 +19,7 @@ function sendAjaxRequest() {
         data: {"password": password},
         success: function(response) {
             if(response === true) {
-                window.location.href = "/profile/change-password";
+                window.location.href = "/profile/manage-profiles";
                 $('form :input').val('');
             } else {
                 alert("비밀번호가 일치하지 않습니다.");

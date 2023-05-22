@@ -47,11 +47,11 @@ public class MemberProfileController {
     /**
      * 비밀번호 변경 페이지
      */
-    @GetMapping("/change-password")
+    @GetMapping("/manage-profiles")
     public String changePwView(HttpSession session) {
         Boolean changePasswordAllowed = (Boolean) session.getAttribute("changePasswordAllowed");
         if (changePasswordAllowed != null && changePasswordAllowed) {
-            return "/profile/change-password";
+            return "/profile/manage-profiles";
         } else {
             return "redirect:/profile/check-password";
         }
@@ -60,13 +60,13 @@ public class MemberProfileController {
     /**
      * 비밀번호 변경
      */
-    @PostMapping("/changePw")
+    @PostMapping("/changePassword")
     public ResponseEntity<?> changePassword(Principal principal, @RequestParam String nowPassword, @RequestParam String newPassword, HttpSession session){
         try {
             String id = principal.getName();
             boolean passwordMatches = memberService.checkPassword(id, nowPassword);
             if(!passwordMatches) {
-                throw new IllegalArgumentException("현재 비밀번호와 일치하지 않습니다.");
+                throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다.");
             }
             Member changePassword = memberService.changePassword(id, nowPassword,newPassword);
             session.removeAttribute("changePasswordAllowed");
@@ -75,4 +75,8 @@ public class MemberProfileController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    /**
+     * 닉네임 변경
+     */
 }

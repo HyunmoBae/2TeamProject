@@ -54,10 +54,18 @@ $(document).ready(function() {
     event.preventDefault(); // 폼 기본 제출 동작 방지
 
     // 입력값 가져오기
-    var nowPassword = $("#nowPassword").val();
-    var newPassword = $("#newPassword").val();
-    var repeatPassword = $("#repeatPassword").val();
+    let nowPassword = $("#nowPassword").val();
+    let newPassword = $("#newPassword").val();
+    let repeatPassword = $("#repeatPassword").val();
 
+    if (nowPassword === '') {
+        alert("현재 비밀번호를 입력하세요.");
+        return;
+    }
+    if (newPassword === '') {
+        alert("새 비밀번호를 입력하세요.");
+        return;
+    }
     if(passwordCheck) {
         alert("새 비밀번호 확인을 다시해주세요.");
         return;
@@ -65,7 +73,7 @@ $(document).ready(function() {
     // 서버로 비밀번호 변경 요청 보내기
     $.ajax({
       type: "POST",
-      url: "/profile/changePw",
+      url: "/profile/changePassword",
       data: {
         nowPassword: nowPassword,
         newPassword: newPassword
