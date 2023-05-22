@@ -1,5 +1,6 @@
 package Team.TeamProject.entity;
 
+import Team.TeamProject.dto.StoreDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -27,13 +28,13 @@ public class Store extends BaseEntity {
     private String apvPermYmd; //인허가 일자
     private String apvCancelYmd; //인허가 취소일자
     private String dtlStateNm; //상세영업상태
-    private String x; //x좌표
-    private String y; //y좌표
+    private Double x; //x좌표
+    private Double y; //y좌표
     private String siteTel; //전화번호
-
 
     @ToString.Exclude
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "Interest")
     private Interest interest; //관심
+
 }
