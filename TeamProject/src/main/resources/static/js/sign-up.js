@@ -150,8 +150,17 @@ $("#phoneNumber").keyup(function() {
 });
 
 $("#signupbutton").click(function() {
+    sendAjaxRequest();
+});
+
+$("form").submit(function(event) {
+    event.preventDefault();
+    sendAjaxRequest();
+});
+
+function sendAjaxRequest() {
     if(passwordCheck) {
-        alert("비밀번호와 일치하지 않습니다. 다시 입력해 주세요.");
+        alert("비밀번호 확인을 다시해주세요.");
         return;
     }
     if(emailCheck) {
@@ -191,7 +200,7 @@ $("#signupbutton").click(function() {
             alert(xhr.responseText);
         }
     });
-});
+}
 
 function DaumPostcode() {
     new daum.Postcode({

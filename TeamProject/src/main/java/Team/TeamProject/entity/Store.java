@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Builder
 @Entity
 
-public class Store extends BaseEntity {
+public class Store {
     // 가게 정보 테이블
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

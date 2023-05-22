@@ -109,26 +109,50 @@ public class MemberService implements UserDetailsService {
      * 비밀번호 확인
      */
     public boolean checkPassword(String id, String password) {
-        log.info("checkid = {}", id);
-        log.info("checkPassword = {}", password);
-        Optional<Member> memberOptional = memberRepository.findById(id);
-        if (!memberOptional.isPresent()) {
+        if (password.isBlank()) {
+            throw new IllegalArgumentException("비밀번호를 입력하세요");
+        }
+        Optional<Member> member  = memberRepository.findById(id);
+        if (!member .isPresent()) {
             throw new IllegalArgumentException("사용자를 찾을 수 업습니다.");
         }
-        Member member = memberOptional.get();
-        String memberPassword = member.getPassword();
-        log.info("checkMember = {}", member);
-        log.info("memberPassword = {}", memberPassword);
-        boolean passwordMatches = passwordEncoder.matches(password, memberPassword);
-        return passwordMatches;
+        MemberDto memberDto = MemberDto.toMemberDto(member.get());
+        String memberPassword = memberDto.getPassword();
+        boolean matches = passwordEncoder.matches(password, memberPassword);
+        return matches;
     }
 
     /**
-     * 비밀번호 공백 체크
+     * 비밀번호 변경
      */
-    public void nullCheckPw(String password) throws IllegalArgumentException {
-        if (password.isBlank()) {
-            throw new IllegalArgumentException("비밀번호를 입력하세요");
+    public Member changePassword(String id, String nowPassword, String newPassword) {
+        if (newPassword.isBlank()) {
+            throw new IllegalArgumentException("새 비밀번호를 입력하세요");
+        }
+        if (nowPassword.equals(newPassword)) {
+            throw new IllegalArgumentException("현재 비밀번호와 새 비밀 번호가 같습니다. 다시 입력해주세요.");
+        }
+        Optional<Member> optionalMember  = memberRepository.findById(id);
+        if (!optionalMember.isPresent()) {
+            throw new IllegalArgumentException("사용자를 찾을 수 업습니다.");
+        }
+        MemberDto memberDto = MemberDto.toMemberDto(optionalMember.get());
+        memberDto.setPassword(newPassword);
+        log.info("memberDto = {}", memberDto);
+        Member member = optionalMember.get();
+        member.setPassword(passwordEncoder.encode(memberDto.getPassword()));
+        log.info("member = {}", member);
+        memberRepository.save(member);
+        return member;
+    }
+
+    /**
+     * 새로운 비밀번호 확인
+     */
+    public void samePassword(String nowpassword, String newpassword) {
+        boolean sameCheck = passwordEncoder.matches(newpassword, nowpassword);
+        if(sameCheck) {
+            throw new IllegalArgumentException("전에 사용하던 비밀번호와 같은 비밀번호 입니다. 새로운 비밀번호를 다시 입력하세요.");
         }
     }
 
