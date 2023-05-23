@@ -19,32 +19,6 @@
 <!-- Navigation-->
 <div th:replace="/fragments/header.html :: fragment-header"></div>
 <!-- Section-->
-<!--<section class="py-5 mt-5">-->
-<!--  <main class="form-main mx-auto">-->
-<!--    <form class="mt-5" action="/profile/changePw" method="post">-->
-<!--      <h1 class="h3 mb-3 fw-normal">비밀번호 변경</h1>-->
-<!--      <div class="form-floating">-->
-<!--        <input type="password" class="form-control" id="nowPassword" name="nowPassword" placeholder="현재 비밀번호">-->
-<!--        <label for="nowPassword">현재 비밀번호</label>-->
-<!--      </div>-->
-<!--      <div class="form-floating">-->
-<!--        <input type="password" class="form-control mb-2" id="newPassword" name="newPassword" placeholder="새 비밀번호">-->
-<!--        <label for="newPassword">새 비밀번호</label>-->
-<!--      </div>-->
-<!--      <div class="form-floating">-->
-<!--        <input type="password" class="form-control" id="repeatPassword" name="repeatPassword" placeholder="비밀번호 확인">-->
-<!--        <label for="repeatPassword">새 비밀번호 확인</label>-->
-<!--        <div class="valid-feedback" id="password_success">-->
-<!--          비밀번호가 일치합니다-->
-<!--        </div>-->
-<!--        <div class="invalid-feedback" id="password_fail">-->
-<!--          비밀번호와 일치하지 않습니다. 다시 입력해 주세요.-->
-<!--        </div>-->
-<!--      </div>-->
-<!--      <button class="w-100 btn btn-lg btn-primary" type="submit">비밀번호 변경</button>-->
-<!--    </form>-->
-<!--  </main>-->
-<!--</section>-->
 <section class="py-5 mt-5">
   <div class="row">
     <div class="col-4">
@@ -57,7 +31,7 @@
       <div class="tab-content" id="v-pills-tabContent">
         <div class="tab-pane fade show active" id="v-pills-password" role="tabpanel" aria-labelledby="v-pills-password-tab" tabindex="0">
           <main class="form-main mx-auto">
-            <form class="mt-5" action="/profile/changePassword" method="post">
+            <form class="mt-5" action="/profile/changePassword" method="post" id="changePassword">
               <h1 class="h3 mb-3 fw-normal">비밀번호 변경</h1>
               <div class="form-floating">
                 <input type="password" class="form-control mb-2" id="nowPassword" name="nowPassword" placeholder="현재 비밀번호">
@@ -81,7 +55,28 @@
             </form>
           </main>
         </div>
-        <div class="tab-pane fade" id="v-pills-nick" role="tabpanel" aria-labelledby="v-pills-nick-tab" tabindex="0">nick</div>
+        <div class="tab-pane fade" id="v-pills-nick" role="tabpanel" aria-labelledby="v-pills-nick-tab" tabindex="0">
+          <main class="form-main mx-auto">
+            <form class="mt-5" action="/profile/changeNick" method="post" id="changeNick">
+              <h1 class="h3 mb-3 fw-normal">닉네임 변경</h1>
+              <div class="form-floating">
+                <input type="text" class="form-control mb-2" id="nowNick" name="nowNick" placeholder="현재 닉네임" th:value="${nick}" readonly>
+                <label for="nowNick">현재 닉네임</label>
+              </div>
+              <div class="form-floating">
+                <input type="text" class="form-control mb-2" id="newNick" name="newNick" placeholder="새 닉네임">
+                <label for="newNick">새 닉네임</label>
+                <div class="valid-feedback" id="nick_success">
+                  사용가능한 닉네임입니다.
+                </div>
+                <div class="invalid-feedback" id="nick_fail">
+                  사용불가능한 닉네임입니다.
+                </div>
+              </div>
+              <button class="w-100 btn btn-lg btn-primary" type="submit">닉네임 변경</button>
+            </form>
+          </main>
+        </div>
       </div>
     </div>
     <div class="col-4"></div>

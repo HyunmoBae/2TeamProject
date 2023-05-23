@@ -51,12 +51,8 @@ public class MemberController {
             Member saveMember = memberService.createMember(memberDto);
             response.sendRedirect("/sign/sign-in");
             return ResponseEntity.ok(saveMember);
-        } catch (DuplicateKeyException e) {
+        }catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Redirect Error");
         }
     }
 

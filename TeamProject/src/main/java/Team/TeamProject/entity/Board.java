@@ -1,5 +1,6 @@
 package Team.TeamProject.entity;
 
+import Team.TeamProject.dto.BoardDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,4 +27,14 @@ public class Board extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Member")
     private Member member;
+
+    public static Board toBoard(BoardDto boardDto, Member member){
+        Board board = new Board();
+        board.setTitle(boardDto.getTitle());
+        board.setContents(boardDto.getContents());
+        board.setCategory(board.getCategory());
+        board.setHit(board.getHit());
+        board.setMember(member);
+        return board;
+    }
 }

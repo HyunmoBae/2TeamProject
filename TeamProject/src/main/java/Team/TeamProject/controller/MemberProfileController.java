@@ -2,6 +2,7 @@ package Team.TeamProject.controller;
 
 import Team.TeamProject.entity.Member;
 import Team.TeamProject.service.MemberService;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -39,13 +40,13 @@ public class MemberProfileController {
                 session.setAttribute("changePasswordAllowed", true);
             }
             return ResponseEntity.ok().body(passwordMatches);
-        } catch (IllegalArgumentException e){
+        } catch (Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
     /**
-     * 비밀번호 변경 페이지
+     * 프로필 변경 페이지
      */
     @GetMapping("/manage-profiles")
     public String changePwView(HttpSession session) {
@@ -54,6 +55,21 @@ public class MemberProfileController {
             return "/profile/manage-profiles";
         } else {
             return "redirect:/profile/check-password";
+        }
+    }
+
+    /**
+     * 닉네임 보여주기
+     */
+
+    @GetMapping("/manage-profiles/nick")
+    public ResponseEntity<?> changePwView(HttpSession session, Principal principal) {
+        try {
+            String id = principal.getName();
+            String nick = memberService.viewNick(id);
+            return ResponseEntity.ok(nick);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -71,7 +87,7 @@ public class MemberProfileController {
             Member changePassword = memberService.changePassword(id, nowPassword,newPassword);
             session.removeAttribute("changePasswordAllowed");
             return ResponseEntity.ok(changePassword);
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
@@ -79,4 +95,15 @@ public class MemberProfileController {
     /**
      * 닉네임 변경
      */
+    @PostMapping("/changeNick")
+    public ResponseEntity<?> changeNick(Principal principal, @RequestParam String newNick, HttpSession session) {
+        try{
+            String id = principal.getName();
+            Member changeNick = memberService.changeNick(id, newNick);
+            session.removeAttribute("changePasswordAllowed");
+            return ResponseEntity.ok(changeNick);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

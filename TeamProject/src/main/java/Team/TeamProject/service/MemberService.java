@@ -147,13 +147,38 @@ public class MemberService implements UserDetailsService {
     }
 
     /**
-     * 새로운 비밀번호 확인
+     * 닉네임 찾기
      */
-    public void samePassword(String nowpassword, String newpassword) {
-        boolean sameCheck = passwordEncoder.matches(newpassword, nowpassword);
-        if(sameCheck) {
-            throw new IllegalArgumentException("전에 사용하던 비밀번호와 같은 비밀번호 입니다. 새로운 비밀번호를 다시 입력하세요.");
+    public String viewNick(String id) {
+        Optional<Member> optionalMember  = memberRepository.findById(id);
+        if (!optionalMember.isPresent()) {
+            throw new IllegalArgumentException("사용자를 찾을 수 업습니다.");
         }
+        MemberDto memberDto = MemberDto.toMemberDto(optionalMember.get());
+        return memberDto.getNick();
+    }
+
+    /**
+     * 닉네임 변경
+     */
+    public Member changeNick(String id, String newNick) {
+        if (newNick.isBlank()) {
+            throw new IllegalArgumentException("새 닉네임을 입력하세요");
+        }
+        Optional<Member> optionalMember  = memberRepository.findById(id);
+        if (!optionalMember.isPresent()) {
+            throw new IllegalArgumentException("사용자를 찾을 수 업습니다.");
+        }
+        boolean checkNick = isNickExists(newNick);
+        if(checkNick) {
+            throw new DuplicateKeyException("이미 사용 중인 닉네임입니다.");
+        }
+        MemberDto memberDto = MemberDto.toMemberDto(optionalMember.get());
+        memberDto.setNick(newNick);
+        Member member = optionalMember.get();
+        member.setNick(memberDto.getNick());
+        memberRepository.save(member);
+        return member;
     }
 
     /**
