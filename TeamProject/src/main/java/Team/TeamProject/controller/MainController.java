@@ -19,7 +19,6 @@ public class MainController {
     @GetMapping("/")
     public String main(Model model) {
         List<StoreDto> storeList = storeService.findAll();
-        System.out.println(storeList);
         model.addAttribute("storeList",storeList);
         return "index";
     }
