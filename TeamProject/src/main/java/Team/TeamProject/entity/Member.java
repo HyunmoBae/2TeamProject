@@ -26,7 +26,7 @@ public class Member extends BaseEntity {
     private String phoneNumber; // 전화번호
 
     @ToString.Exclude
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "MemberAddress")
     private MemberAddress memberAddress; //상세주소
 

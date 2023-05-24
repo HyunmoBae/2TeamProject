@@ -1,8 +1,8 @@
-$("#checkPwBotton").click(function() {
+$("#checkPwBotton").click(function () {
     sendAjaxRequest();
 });
 
-$("form").submit(function(event) {
+$("form").submit(function (event) {
     event.preventDefault();
     sendAjaxRequest();
 });
@@ -15,10 +15,10 @@ function sendAjaxRequest() {
     }
     $.ajax({
         type: "post",
-        url:"/profile/checkPw",
-        data: {"password": password},
-        success: function(response) {
-            if(response === true) {
+        url: "/profile/checkPw",
+        data: { "password": password },
+        success: function (response) {
+            if (response === true) {
                 window.location.href = "/profile/manage-profiles";
                 $('form :input').val('');
             } else {
@@ -26,7 +26,7 @@ function sendAjaxRequest() {
                 $('form :input').val('');
             }
         },
-        error: function(xhr, textStatus, errorThrown) {
+        error: function (xhr, textStatus, errorThrown) {
             console.log("에러발생", errorThrown);
             alert(xhr.responseText);
         }

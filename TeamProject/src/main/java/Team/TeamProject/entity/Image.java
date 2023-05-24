@@ -1,5 +1,6 @@
 package Team.TeamProject.entity;
 
+import Team.TeamProject.dto.ImageDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,7 +22,15 @@ public class Image extends BaseEntity {
     private String imgName; // 이미지 원본 이름
     private String imgPath; // 이미지 파일 경로
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "board_idx")
     private Board board;
+
+    public static Image toImage(ImageDto imageDto, Board board) {
+        Image image = new Image();
+        image.setImgName(imageDto.getImgName());
+        image.setImgPath(imageDto.getImgPath());
+        image.setBoard(board);
+        return image;
+    }
 }
