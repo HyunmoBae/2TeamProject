@@ -24,9 +24,10 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent"></div>
         <!-- 지도 위에 표시될 마커 카테고리 -->
         <div class="category-wrapper">
-            <button class="category-button" id="chickenMenu" onclick="changeMarker('chicken')">치킨</button>
-            <button class="category-button" id="pizzaMenu" onclick="changeMarker('pizza')">피자</button>
-            <button class="category-button">카테고리 3</button>
+            <button class="category-button" id="cafe">카페</button>
+            <button class="category-button" id="호프/통닭">치킨</button>
+            <button class="category-button" id="pizza">피자</button>
+            <button class="category-button" id="location"> 내 위치 </button>
             <button class="category-button" style="margin-right: 50px;">카테고리 4</button>
         </div>
         <form class="d-flex" role="search">
@@ -42,6 +43,30 @@
     <div id="mapwrap">
         <!-- 지도가 표시될 div -->
         <div id="map" style="width:100%;height:600px;"></div>
+            <div id="menu_wrap" class="bg_white">
+                <div class="option">
+                    <div>
+                        <form onsubmit="searchPlaces(); return false;">
+                            키워드 : <input type="text" value="이태원 맛집" id="keyword" size="15">
+                            <button type="submit">검색하기</button>
+                        </form>
+                    </div>
+                </div>
+                <hr>
+<!--                <ul id="placesList" th:each="store:${storeList}">-->
+<!--                    <li>-->
+<!--                        <span class="item"></span>-->
+<!--                        <div class="info">-->
+<!--                           <h5 th:text="${store.bplcNm}"></h5>-->
+<!--                            <span th:text="${store.uptaeNm}"></span><br>-->
+<!--                            <span th:text="${store.rdnWhlAddr}"></span><br>-->
+<!--                           <span class="jibun gray" th:text="${store.siteWhlAddr}"></span><br>-->
+<!--                          <span class="tel" th:text="${store.siteTel}"></span>-->
+<!--                        </div>-->
+<!--                    </li>-->
+<!--                </ul>-->
+                <div id="pagination"></div>
+            </div>
     </div>
 
 </section>
@@ -55,153 +80,363 @@
 
     var mapContainer = document.getElementById('map'), // 지도를 표시할 div
         mapOption = {
-            center: new kakao.maps.LatLng(35.8929027578229, 128.64565835012), // 지도의 중심좌표
+            center: new kakao.maps.LatLng(35.88662909733128, 128.6355186755777), // 지도의 중심좌표
             level: 3 // 지도의 확대 레벨
         };
 
-        // 지도를 생성합니다
+    // 지도를 생성합니다
     var map = new kakao.maps.Map(mapContainer, mapOption);
 
-    var chickenPositions = [];
-    var pizzaPositions = [];
-    //분류
-    for (var i = 0; i < storeList.length; i++) {
-        var store = storeList[i];
-        if (store.dtlStateNm === '영업') {
-            if (store.uptaeNm === '호프/통닭' || store.uptaeNm === '통닭(치킨)') {
-                chickenPositions.push(new kakao.maps.LatLng(store.y, store.x));
-                if(store.bplcNm.includes("피자")){
-                    pizzaPositions.push(new kakao.maps.LatLng(store.y, store.x));
+    $(document).ready(function () {
+        // 테스트 버튼 클릭 이벤트 핸들러 등록
+        $(".category-button").click(function () {
+            var buttonId =$(this).attr("id");
+            var url = "/test?uptae=" + buttonId;
+            console.log(buttonId);
+
+            // Ajax GET 요청
+            $.ajax({
+                url: url,
+                method: "GET",
+                success: function (response) {
+                    processUptaeInfo(response); // 받은 데이터 처리하는 함수 호출 및 마커찍기.
+                    if (response == null) {
+                        console.log("값 없음")
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log("요청 실패:" + error);
                 }
-            } else {
-                pizzaPositions.push(new kakao.maps.LatLng(store.y, store.x));
-            }
-        }
-    }
-
-    var markerImageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/category.png';  // 마커이미지의 주소입니다. 스프라이트 이미지 입니다
-    chickenMarkers = [], // 치킨집 마커 객체를 가지고 있을 배열입니다
-    pizzaMarkers = [], // 피자집 마커 객체를 가지고 있을 배열입니다
-
-    createChickenMarkers(); // 치킨집 마커를 생성하고 치킨집 마커 배열에 추가합니다
-    createPizzaMarkers(); // 피자집 마커를 생성하고 피자집 마커 배열에 추가합니다
-
-    // changeMarker('chicken'); // 지도에 치킨집 마커가 보이도록 설정합니다
-
-    // 마커이미지의 주소와, 크기, 옵션으로 마커 이미지를 생성하여 리턴하는 함수입니다
-    function createMarkerImage(src, size, options) {
-        var markerImage = new kakao.maps.MarkerImage(src, size, options);
-        return markerImage;
-    }
-
-    // 좌표와 마커이미지를 받아 마커를 생성하여 리턴하는 함수입니다
-    function createMarker(position, image) {
-        var marker = new kakao.maps.Marker({
-            position: position,
-            image: image
+            });
         });
+    });
 
-        return marker;
+    /* cafe 데이터 전체 전송하는 부분 (DB에 저장된 모든 카페의 정보)*/
+    function processUptaeInfo(data) {
+
+            // 데이터 처리
+            for (var i = 0; i < data.length; i++) {
+                if (data[i].dtlStateNm == "영업") {
+                    // console.log(data[i]);  cafeInfo 속성의 값 출력 -> 전송됨
+                    var bplcNm = data[i].bplcNm;
+                    // console.log(cafename);
+
+                    // 마커가 표시될 위치입니다
+                    var markerPosition = new kakao.maps.LatLng(data[i].y, data[i].x);
+
+                    // 마커를 생성합니다
+                    var marker = new kakao.maps.Marker({
+                        position: markerPosition // 좌표값 저장되어있으니
+                    });
+
+                    // 마커가 지도 위에 표시되도록 설정합니다
+                    marker.setMap(map);
+
+                    // 클릭 이벤트 리스너를 추가하는 함수 정의
+                    function addClickListener(marker, bplcNm) {
+                        kakao.maps.event.addListener(marker, 'click', function () {
+                            var infowindow = new kakao.maps.InfoWindow({
+                                content: bplcNm, // 가게 이름을 인포윈도우 내용으로 설정합니다
+                                removable: true // removeable 속성을 true로 설정하여 닫기 버튼을 표시합니다
+                            });
+                            infowindow.open(map, marker);
+                        });
+
+                    }
+                    // 클릭 이벤트 리스너 추가
+                    addClickListener(marker, bplcNm);
+
+                }
+            }
     }
 
-    // 치킨집 마커를 생성하고 치킨집 마커 배열에 추가하는 함수입니다
-    function createChickenMarkers() {
 
-        for (var i = 0; i < chickenPositions.length; i++) {
+    // var chickenInfo = [];
+    // var pizzaInfo = [];
+    // //분류
+    // for (var i = 0; i < storeList.length; i++) {
+    //     var store = storeList[i];
+    //     if (store.dtlStateNm === '영업') {
+    //         if (store.uptaeNm === '호프/통닭' || store.uptaeNm === '통닭(치킨)') {
+    //             var chicken = {
+    //                 position : new kakao.maps.LatLng(store.y, store.x),
+    //                 bplcNm: store.bplcNm
+    //             }
+    //             chickenInfo.push(chicken);
+    //             if(store.bplcNm.includes("피자")){
+    //                 var pizza = {
+    //                     position: new kakao.maps.LatLng(store.y, store.x),
+    //                     bplcNm: store.bplcNm
+    //                 }
+    //                 pizzaInfo.push(pizza);
+    //             }
+    //         } else {
+    //             var pizza = {
+    //                 position: new kakao.maps.LatLng(store.y, store.x),
+    //                 bplcNm: store.bplcNm
+    //             }
+    //             pizzaInfo.push(pizza);
+    //         }
+    //     }
+    // }
+    //
+    // var markerImageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/category.png';  // 마커이미지의 주소입니다. 스프라이트 이미지 입니다
+    // chickenMarkers = [], // 치킨집 마커 객체를 가지고 있을 배열입니다
+    // pizzaMarkers = [], // 피자집 마커 객체를 가지고 있을 배열입니다
+    //
+    // createChickenMarkers(); // 치킨집 마커를 생성하고 치킨집 마커 배열에 추가합니다
+    // createPizzaMarkers(); // 피자집 마커를 생성하고 피자집 마커 배열에 추가합니다
+    //
+    // // changeMarker('chicken'); // 지도에 치킨집 마커가 보이도록 설정합니다
+    //
+    // // 마커이미지의 주소와, 크기, 옵션으로 마커 이미지를 생성하여 리턴하는 함수입니다
+    // function createMarkerImage(src, size, options) {
+    //     var markerImage = new kakao.maps.MarkerImage(src, size, options);
+    //     return markerImage;
+    // }
+    //
+    // // 좌표와 마커이미지를 받아 마커를 생성하여 리턴하는 함수입니다
+    // function createMarker(position, image) {
+    //     var marker = new kakao.maps.Marker({
+    //         position: position,
+    //         image: image
+    //     });
+    //
+    //     return marker;
+    // }
+    //
+    // // 치킨집 마커를 생성하고 치킨집 마커 배열에 추가하는 함수입니다
+    // function createChickenMarkers() {
+    //
+    //     for (var i = 0; i < chickenInfo.length; i++) {
+    //         (function(index) {
+    //             var imageSize = new kakao.maps.Size(22, 26),
+    //                 imageOptions = {
+    //                     spriteOrigin: new kakao.maps.Point(10, 0),
+    //                     spriteSize: new kakao.maps.Size(36, 98)
+    //                 };
+    //
+    //             var markerImage = createMarkerImage(markerImageSrc, imageSize, imageOptions),
+    //                 marker = createMarker(chickenInfo[index].position, markerImage);
+    //
+    //             kakao.maps.event.addListener(marker, 'click', function() {
+    //                 var content = '<div class="customoverlay">' +
+    //                     `<span class="title">${chickenInfo[index].bplcNm}</span>` +
+    //                     '<button class="close" onclick="closeOverlay(' + index + ')" title="닫기">X</button>' +
+    //                     '</div>';
+    //
+    //                 var customOverlay = new kakao.maps.CustomOverlay({
+    //                     map: map,
+    //                     position: chickenInfo[index].position,
+    //                     content: content,
+    //                     yAnchor: 1,
+    //                 });
+    //
+    //                 customOverlays.push(customOverlay);
+    //             });
+    //
+    //             chickenMarkers.push(marker);
+    //         })(i);
+    //     }
+    // }
+    //
+    // // 치킨집 마커들의 지도 표시 여부를 설정하는 함수입니다
+    // function setChickenMarkers(map) {
+    //     for (var i = 0; i < chickenMarkers.length; i++) {
+    //         chickenMarkers[i].setMap(map);
+    //     }
+    // }
+    //
+    // // 피자집 마커를 생성하고 피자집 마커 배열에 추가하는 함수입니다
+    // function createPizzaMarkers() {
+    //
+    //     for (var i = 0; i < pizzaInfo.length; i++) {
+    //         (function(index) {
+    //             var imageSize = new kakao.maps.Size(22, 26),
+    //                 imageOptions = {
+    //                     spriteOrigin: new kakao.maps.Point(10, 0),
+    //                     spriteSize: new kakao.maps.Size(36, 98)
+    //                 };
+    //
+    //             var markerImage = createMarkerImage(markerImageSrc, imageSize, imageOptions),
+    //                 marker = createMarker(pizzaInfo[index].position, markerImage);
+    //
+    //             kakao.maps.event.addListener(marker, 'click', function() {
+    //                 var content = '<div class="customoverlay">' +
+    //                     `<span class="title">${pizzaInfo[index].bplcNm}</span>` +
+    //                     '<button class="close" onclick="closeOverlay(' + index + ')" title="닫기">X</button>' +
+    //                     '</div>';
+    //
+    //                 var customOverlay = new kakao.maps.CustomOverlay({
+    //                     map: map,
+    //                     position: pizzaInfo[index].position,
+    //                     content: content,
+    //                     yAnchor: 1,
+    //                 });
+    //
+    //                 customOverlays.push(customOverlay);
+    //             });
+    //
+    //             pizzaMarkers.push(marker);
+    //         })(i);
+    //     }
+    // }
+    //
+    // // 피자집 마커들의 지도 표시 여부를 설정하는 함수입니다
+    // function setPizzaMarkers(map) {
+    //     for (var i = 0; i < pizzaMarkers.length; i++) {
+    //         pizzaMarkers[i].setMap(map);
+    //     }
+    // }
+    //
+    // var customOverlays = []; // 커스텀 오버레이를 저장할 배열
+    //
+    // function changeMarker(type) {
+    //     var chickenMenu = document.getElementById('chickenMenu');
+    //     var pizzaMenu = document.getElementById('pizzaMenu');
+    //
+    //     // 치킨집 카테고리가 클릭됐을 때
+    //     if (type === 'chicken') {
+    //         // 다른 커스텀 오버레이 닫기
+    //         closeAllCustomOverlays();
+    //         customOverlays = [];
+    //
+    //         // 치킨집 카테고리를 선택된 스타일로 변경하고
+    //         chickenMenu.className = 'menu_selected category-button';
+    //
+    //         // 나머지 카테고리는 선택되지 않은 스타일로 바꿉니다
+    //         pizzaMenu.className = 'category-button';
+    //
+    //         // 치킨집 마커들만 지도에 표시하도록 설정합니다
+    //         setChickenMarkers(map);
+    //         setPizzaMarkers(null);
+    //
+    //         //커스텀 오버레이 생성
+    //         for (var i = 0; i < chickenInfo.length; i++) {
+    //             // 커스텀 오버레이에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다
+    //             var content = '<div class="customoverlay">' +
+    //                 `<span class="title">${chickenInfo[i].bplcNm}</span>` +
+    //                 `<button class="close" onclick="closeOverlay(` + i + `)" title="닫기">X</button>` +
+    //                 '</div>';
+    //
+    //             // 커스텀 오버레이를 생성합니다
+    //             var customOverlay = new kakao.maps.CustomOverlay({
+    //                 map: map,
+    //                 position: chickenInfo[i].position,
+    //                 content: content,
+    //                 yAnchor: 1
+    //             });
+    //
+    //             customOverlays.push(customOverlay);
+    //         }
+    //
+    //     } else if (type === 'pizza') { // 피자집 카테고리가 클릭됐을 때
+    //         // 다른 커스텀 오버레이 닫기
+    //         closeAllCustomOverlays();
+    //         customOverlays = [];
+    //
+    //         // 피자집 카테고리를 선택된 스타일로 변경하고
+    //         chickenMenu.className = 'category-button';
+    //         pizzaMenu.className = 'menu_selected category-button';
+    //
+    //         // 피자집 마커들만 지도에 표시하도록 설정합니다
+    //         setChickenMarkers(null);
+    //         setPizzaMarkers(map);
+    //
+    //         //커스텀 오버레이 생성
+    //         for (var i = 0; i < pizzaInfo.length; i++) {
+    //             // 커스텀 오버레이에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다
+    //             var content = '<div class="customoverlay">' +
+    //                 `<span class="title">${pizzaInfo[i].bplcNm}</span>` +
+    //                 `<button class="close" onclick="closeOverlay(` + i + `)" title="닫기">X</button>` +
+    //                 '</div>';
+    //
+    //             // 커스텀 오버레이를 생성합니다
+    //             var customOverlay = new kakao.maps.CustomOverlay({
+    //                 map: map,
+    //                 position: pizzaInfo[i].position,
+    //                 content: content,
+    //                 yAnchor: 1
+    //             });
+    //
+    //             // 커스텀 오버레이를 배열에 추가
+    //             customOverlays.push(customOverlay);
+    //         }
+    //     }
+    // }
+    //
+    // // 모든 커스텀 오버레이 닫기
+    // function closeAllCustomOverlays() {
+    //     for (var i = 0; i < customOverlays.length; i++) {
+    //         customOverlays[i].setMap(null);
+    //     }
+    // }
+    //
+    // // 해당 커스텀 오버레이를 닫기
+    // function closeOverlay(index) {
+    //     if (index >= 0 && index < customOverlays.length) {
+    //         customOverlays[index].setMap(null);
+    //     }
+    // }
+    //
+    // /*현재 위치 찍는 부분*/
+    // $(document).ready(function () {
+    //     $("#location").click(function () {
+    //
+    //         // HTML5의 geolocation으로 사용할 수 있는지 확인합니다
+    //         if (navigator.geolocation) {
+    //
+    //             // GeoLocation을 이용해서 접속 위치를 얻어옵니다
+    //             navigator.geolocation.getCurrentPosition(function (position) {
+    //
+    //                 var lat = position.coords.latitude, // 위도
+    //                     lon = position.coords.longitude; // 경도
+    //
+    //                 var locPosition = new kakao.maps.LatLng(lat, lon), // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
+    //                     message = '<div style="padding:5px;">사용자의 현재위치</div>'; // 인포윈도우에 표시될 내용입니다
+    //
+    //                 // 마커와 인포윈도우를 표시합니다
+    //                 displayMarker(locPosition, message);
+    //
+    //             });
+    //
+    //         } else { // HTML5의 GeoLocation을 사용할 수 없을때 마커 표시 위치와 인포윈도우 내용을 설정합니다
+    //
+    //             var locPosition = new kakao.maps.LatLng(33.450701, 126.570667),
+    //                 message = 'geolocation을 사용할수 없어요..'
+    //
+    //             displayMarker(locPosition, message);
+    //         }
+    //
+    //         // 지도에 마커와 인포윈도우를 표시하는 함수입니다
+    //         function displayMarker(locPosition, message) {
+    //
+    //             // 마커를 생성합니다
+    //             var marker = new kakao.maps.Marker({
+    //                 map: map,
+    //                 position: locPosition
+    //             });
+    //
+    //             var iwContent = message, // 인포윈도우에 표시할 내용
+    //                 iwRemoveable = true;
+    //
+    //             // 인포윈도우를 생성합니다
+    //             var infowindow = new kakao.maps.InfoWindow({
+    //                 content: iwContent,
+    //                 removable: iwRemoveable
+    //             });
+    //
+    //             // 인포윈도우를 마커위에 표시합니다
+    //             infowindow.open(map, marker);
+    //
+    //             // 지도 중심좌표를 접속위치로 변경합니다
+    //             map.setCenter(locPosition);
+    //         }
+    //     })
+    // })
 
-            var imageSize = new kakao.maps.Size(22, 26),
-                imageOptions = {
-                    spriteOrigin: new kakao.maps.Point(10, 0),
-                    spriteSize: new kakao.maps.Size(36, 98)
-                };
-
-            // 마커이미지와 마커를 생성합니다
-            var markerImage = createMarkerImage(markerImageSrc, imageSize, imageOptions),
-                marker = createMarker(chickenPositions[i], markerImage);
-
-            // 생성된 마커를 치킨집 마커 배열에 추가합니다
-            chickenMarkers.push(marker);
-        }
-    }
-
-    // 치킨집 마커들의 지도 표시 여부를 설정하는 함수입니다
-    function setChickenMarkers(map) {
-        for (var i = 0; i < chickenMarkers.length; i++) {
-            chickenMarkers[i].setMap(map);
-
-            // // 커스텀 오버레이에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다
-            // var content = '<div class="customoverlay">' +
-            //         `<span class="title">${storeList.bplcNm}</span>` +
-            //     '</div>';
-
-            // // 커스텀 오버레이를 생성합니다
-            // var customOverlay = new kakao.maps.CustomOverlay({
-            //     map: map,
-            //     position: position,
-            //     content: content,
-            //     yAnchor: 1
-            // });
-
-        }
-    }
-
-    // 피자집 마커를 생성하고 치킨집 마커 배열에 추가하는 함수입니다
-    function createPizzaMarkers() {
-
-        for (var i = 0; i < pizzaPositions.length; i++) {
-
-            var imageSize = new kakao.maps.Size(22, 26),
-                imageOptions = {
-                    spriteOrigin: new kakao.maps.Point(10, 0),
-                    spriteSize: new kakao.maps.Size(36, 98)
-                };
-
-            // 마커이미지와 마커를 생성합니다
-            var markerImage = createMarkerImage(markerImageSrc, imageSize, imageOptions),
-                marker = createMarker(pizzaPositions[i], markerImage);
-
-            // 생성된 마커를 피자집 마커 배열에 추가합니다
-            pizzaMarkers.push(marker);
-        }
-    }
-
-    // 피자집 마커들의 지도 표시 여부를 설정하는 함수입니다
-    function setPizzaMarkers(map) {
-        for (var i = 0; i < pizzaMarkers.length; i++) {
-            pizzaMarkers[i].setMap(map);
-        }
-    }
-
-    // 카테고리를 클릭했을 때 type에 따라 카테고리의 스타일과 지도에 표시되는 마커를 변경합니다
-    function changeMarker(type) {
-
-        var chickenMenu = document.getElementById('chickenMenu');
-        var pizzaMenu = document.getElementById('pizzaMenu');
-
-        // 치킨집 카테고리가 클릭됐을 때
-        if (type === 'chicken') {
-
-            // 치킨집 카테고리를 선택된 스타일로 변경하고
-            chickenMenu.className = 'menu_selected category-button';
-
-            // 나머지 카테고리는 선택되지 않은 스타일로 바꿉니다
-            pizzaMenu.className = 'category-button';
-
-            // 치킨집 마커들만 지도에 표시하도록 설정합니다
-            setChickenMarkers(map);
-            setPizzaMarkers(null);
-
-        } else if (type === 'pizza') { // 피자집 카테고리가 클릭됐을 때
-
-            // 피자집 카테고리를 선택된 스타일로 변경하고
-            chickenMenu.className = 'category-button';
-            pizzaMenu.className = 'menu_selected category-button';
-
-            // 피자집 마커들만 지도에 표시하도록 설정합니다
-            setChickenMarkers(null);
-            setPizzaMarkers(map);
-        }
-    }
+    // ====================== 보완해야할 것들 =======================
+    //1. 마커 눌렀을때 나오는 커스텀 오버레이 안닫아짐
 
 </script>
 </body>

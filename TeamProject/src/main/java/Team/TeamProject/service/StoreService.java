@@ -17,6 +17,7 @@ public class StoreService {
     @Autowired
     private final StoreRepository storeRepository;
 
+    //모든 상점정보 받아오기
     @Transactional
     public List<StoreDto> findAll(){
         List<Store> storeList = storeRepository.findAll();
@@ -26,5 +27,18 @@ public class StoreService {
             storeDtoList.add(dto);
         }
         return storeDtoList;
+    }
+
+    // 카테고리에 맞는 가게 검색
+    @Transactional
+    public List<StoreDto> uptaeSearch(String uptae) {
+
+        var uptaeInfo = storeRepository.findAllByuptaeNm(uptae);
+        List<StoreDto> uptaeList = new ArrayList<>();
+        for (Store store:uptaeInfo){
+            StoreDto dto = new StoreDto().StoreEntityToDto(store);
+            uptaeList.add(dto);
+        }
+        return uptaeList;
     }
 }
