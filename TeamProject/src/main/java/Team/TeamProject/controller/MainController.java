@@ -18,9 +18,8 @@ public class MainController {
 
     //메인페이지
     @GetMapping("/")
-    public String main(Model model) {
-        List<StoreDto> storeList = storeService.findAll();
-        model.addAttribute("storeList",storeList);
+    public String main() {
+
         return "index";
     }
 
