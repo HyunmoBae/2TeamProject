@@ -8,14 +8,16 @@
                 class="navbar-toggler-icon"></span></button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
-                <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">게시판</a></li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/board/list">게시판</a>
+                </li>
                 <div sec:authorize="hasRole('ADMIN')">
                     <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">회원관리</a></li>
                 </div>
             </ul>
             <div sec:authorize="isAnonymous()" id="login-container">
                 <form class="d-flex">
-                    <button class="btn btn-outline-dark" type="button" onclick="location.href='/sign/sign-in' ">
+                    <button class="btn btn-outline-dark" type="button" onclick="location.href='/sign/sign-in'">
                         <i class="bi bi-person-fill me-1"></i>
                         로그인
                     </button>

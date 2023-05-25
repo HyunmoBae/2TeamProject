@@ -1,8 +1,8 @@
 package Team.TeamProject.controller;
 
 import Team.TeamProject.dto.BoardDto;
-import Team.TeamProject.dto.ImageDto;
 import Team.TeamProject.entity.Board;
+import Team.TeamProject.entity.Image;
 import Team.TeamProject.service.BoardService;
 import Team.TeamProject.service.ImageService;
 import Team.TeamProject.service.MemberService;
@@ -18,7 +18,6 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Controller
@@ -28,6 +27,14 @@ public class BoardController {
     private final MemberService memberService;
     private final BoardService boardService;
     private final ImageService imageService;
+
+    /**
+     * 글 목록 페이지
+     */
+    @GetMapping("/list")
+    public String listView() {
+        return "/board/list";
+    }
 
     /**
      * 글작성 페이지
@@ -60,10 +67,28 @@ public class BoardController {
                 String imageUrl = "/summernote_image/" + savedFileName;
                 imageUrls.add(imageUrl);
             }
-
             return ResponseEntity.ok(imageUrls);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Collections.singletonList(e.getMessage()));
+        }
+    }
+
+    /**
+     * 게시글 이미지 삭제
+     */
+    @PostMapping("/deleteSummernoteImageFile")
+    @ResponseBody
+    public ResponseEntity<String> deleteSummernoteImageFile(@RequestParam("imageUrl") String imageUrl) {
+        try {
+            // 이미지 파일명 추출
+            String fileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+            log.info("fileName: {}", fileName);
+            // 이미지 파일 삭제
+            imageService.deleteFile(fileName);
+
+            return ResponseEntity.ok("이미지를 삭제하였습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("이미지 삭제 실패: " + e.getMessage());
         }
     }
 
@@ -74,10 +99,24 @@ public class BoardController {
     public ResponseEntity<String> saveBoard(@RequestBody BoardDto boardDto, Principal principal) {
         try {
             String id = principal.getName();
+            log.info("controller boardDto: {}", boardDto);
             boardService.saveBoard(boardDto, id);
             return ResponseEntity.ok("게시글이 저장되었습니다.");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    /**
+     * 게시글 쓰기 벗어날때 저장되지 않은 이미지들 로컬에서 삭제
+     */
+    @PostMapping("/deleteimage")
+    public ResponseEntity<String> deleteImage() {
+        try {
+            imageService.deleteImgList();
+            return ResponseEntity.ok("로컬 이미지 삭제 완료");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("로컬 이미지 삭제 실패: " + e.getMessage());
         }
     }
 
@@ -89,4 +128,5 @@ public class BoardController {
         Board board = boardService.test1();
         return ResponseEntity.ok().body(board.getContents());
     }
+
 }

@@ -31,7 +31,7 @@ public class SecurityConfig {
 
         http.authorizeRequests()
                 .mvcMatchers("/css/**", "/js/**", "/img/**", "/assets/**", "/summernote/**").permitAll()
-                .mvcMatchers("/", "/fragments/**", "/sign/**").permitAll()
+                .mvcMatchers("/", "/fragments/**", "/sign/**", "/board/list").permitAll()
                 .mvcMatchers("/item/**").hasAnyRole("ADMIN", "USER")
                 .anyRequest().authenticated();
 

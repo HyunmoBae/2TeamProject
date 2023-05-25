@@ -23,6 +23,7 @@ public class Board extends BaseEntity {
     private Long board_idx;
 
     private String title; // 글 제목
+    @Column(columnDefinition = "LONGTEXT")
     private String contents; // 글 내용
     private String category; // 카테고리
     private int count; // 조회수

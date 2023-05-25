@@ -21,6 +21,9 @@ $(document).ready(function () {
                 for (var i = files.length - 1; i >= 0; i--) {
                     uploadSummernoteImageFiles([files[i]], this);
                 }
+            },
+            onMediaDelete: function (target) {
+                deleteSummernoteImageFile(target[0].src);
             }
         }
     });
@@ -49,18 +52,52 @@ $(document).ready(function () {
         });
     }
 
+    function deleteSummernoteImageFile(imageUrl) {
+        $.ajax({
+          type: 'POST',
+          url: '/board/deleteSummernoteImageFile',
+          data: { imageUrl: imageUrl },
+          success: function (response) {
+            console.log('이미지 삭제 성공');
+          },
+          error: function (xhr, status, error) {
+            console.error('이미지 삭제 실패');
+            console.error(error);
+          }
+        });
+      }
+
     $('#btnSave').click(function () {
         var title = $('#title').val();
         var contents = $('#summernote').summernote('code');
         var category = $('#category').val();
+        var contentsCheck = $('#summernote').summernote('code').replace(/<\/?[^>]+(>|$)/g, '').trim();
+        if (title === '') {
+            alert("제목을 입력하세요.");
+            return;
+        }
+        if (!contentsCheck) {
+            alert("내용을 입력하세요.");
+            return;
+        }
+        console.log(contents);
+       var imageDtos = [];
 
+        var imgTags = $(contents).find('img');
+
+        imgTags.each(function() {
+            var imgSrc = $(this).attr('src');
+            var imgName = imgSrc.substring(imgSrc.lastIndexOf('/') + 1);
+            imageDtos.push({ imgName: imgName });
+          });
+        
         // BoardDto 생성
         var boardDto = {
             title: title,
             contents: contents,
             category: category,
             count: 0,
-            imageDtos: []  // 이미지는 이미지 업로드 시 자동으로 삽입되므로 따로 지정하지 않음
+            imageDtos: imageDtos
         };
 
         // Ajax를 이용하여 게시글 저장 요청
@@ -84,5 +121,20 @@ $(document).ready(function () {
     $('#btnList').click(function () {
         // 목록으로 이동하는 처리
         // ...
+    });
+
+    // 페이지 벗어날때 게시물이 저장되지 않으면 로컬에 저장된 이미지들 삭제
+    $(window).on('beforeunload', function () {
+        $.ajax({
+            type:"POST",
+            url: "/board/deleteimage",
+            success: function (response) {
+                console.log('사진 삭제 성공');
+            },
+            error: function (xhr, status, error) {
+                console.error('사진 삭제 실패');
+                console.error(xhr.responseText);
+            }
+        });
     });
 });

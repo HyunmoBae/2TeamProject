@@ -48,7 +48,7 @@
             <input type="text" class="form-control" name="title" id="title" placeholder="제목을 입력해 주세요">
           </div>
           <div class="col-1">
-            <div sec:authorize="hasRole('ADMIN')">
+            <div th:if="${#httpServletRequest.getRequestURI().contains('/board/writing/admin')}">
               공지글
             </div>
           </div>
