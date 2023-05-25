@@ -23,6 +23,19 @@
 <nav class="navbar navbar-expand-lg">
     <div class="container px-4 px-lg-5">
         <div class="collapse navbar-collapse" id="navbarSupportedContent"></div>
+        <!-- 지도 위에 표시될 마커 카테고리 -->
+        <div class="category-wrapper">
+            <button class="category-button" id="cafe">카페</button>
+            <button class="category-button">음식점</button>
+            <button class="category-button" id="chickenMenu" onclick="changeMarker('chicken')">치킨</button>
+            <button class="category-button" id="pizzaMenu" onclick="changeMarker('pizza')">피자</button>
+            <button class="category-button">분식</button>
+            <button class="category-button">편의점</button>
+            <button class="category-button" id="location">현위치</button>
+<!--            <button class="category-button" id="submitBtn">확인용</button>-->
+
+        </div>
+
         <form class="d-flex" role="search">
             <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
             <button class="btn btn-outline-dark" type="submit">Search</button>
@@ -33,12 +46,63 @@
 <!-- Section-->
 <!-- 카카오 지도부분-->
 <section class="py-4">
-    <div>
-        <button id="location">현재위치</button>
-        <button id="cafe">카페 마커 찍기</button>
-    </div>
-    <div id="map" style="width:100%;height:350px;"></div>
 
+    <div class="map_wrap">
+    <div id="map" style="width:100%;height:350px;"></div>
+        <div id="menu_wrap2" class="bg_white">
+            <div class="option">
+                <div>
+                        <h2>검색결과</h2>
+                </div>
+            </div>
+            <hr style="border-width: 2px; border-color: black;">
+
+            <ul id="placesList" th:each="store:${cafeInfo}">
+                <li>
+                    <span class="item"></span>
+                    <div class="info">
+                        <span>뜨긴함?</span>
+                        <h5 th:text="${store.bplcNm}"></h5> <!--ㅜㅜ 안나옴-->
+                        <span th:text="${store.uptaeNm}"></span><br>
+                        <span th:text="${store.rdnWhlAddr}"></span><br>
+                        <span class="jibun gray" th:text="${store.siteWhlAddr}"></span><br>
+                        <span class="tel" th:text="${store.siteTel}"></span>
+                    </div>
+                </li>
+            </ul>
+            <div id="pagination"></div>
+        </div>
+
+
+        <div id="menu_wrap" class="bg_white">
+            <div class="option">
+                        <hr/>
+                        <button type="submit"  class="previous-button">이전으로</button>
+                <div class="button-container">
+                    <form id="cafeinfo">
+                        <li id="a">
+                            <span>상호명</span>
+                        </li>
+                        <li>
+                            <span>업체구분</span>
+                        </li>
+                        <li>
+                            <span>주소</span>
+                        </li>
+                        <li>
+                            <span>영업시간</span>
+                        </li>
+                        <li>
+                            <span>영업상태</span>
+                        </li>
+                        <li>
+                            <span>전화번호</span>
+                        </li>
+
+                    </form>
+                </div>
+            </div>
+        </div>
     <script type="text/javascript"
             src="//dapi.kakao.com/v2/maps/sdk.js?appkey=406784a1fe10d8f90dc9afa5b43d84c9"></script>
     <script>
@@ -51,6 +115,7 @@
 
         // 지도를 표시할 div와  지도 옵션으로  지도를 생성합니다
         var map = new kakao.maps.Map(mapContainer, mapOption);
+
     </script>
 </section>
 <!-- Footer-->
@@ -59,19 +124,32 @@
 <script th:src="@{https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js}"></script>
 
 <!--버튼 클릭시 이벤트-->
-<script>
+<script th:inline="javascript">
+
+    // 모델 데이터 가져오기
+    var cafeInfo = /*[[${cafeInfo}]]*/ [];
+
     /* 카페 마커 찍는 부분*/
     $(document).ready(function () {
 
         // 테스트 버튼 클릭 이벤트 핸들러 등록
         $("#cafe").click(function () {
-            console.log("클릭 했다.");
+            console.log("카페 불러오기 버튼 클릭 했다.");
             // Ajax GET 요청
             $.ajax({
                 url: "/test",
                 method: "GET",
                 success: function (response) {
                     console.log("버튼 누르고 전송");
+                    // for (var i = 0; i < response.length; i++) {
+                    //     var cafe = response[i];
+                    //     console.log(cafe);
+                    // }
+                    processCafeInfo(response); // 받은 데이터 처리하는 함수 호출 및 마커찍기.
+                    console.log("호출 성공")
+                    if (response == null) {
+                        console.log("값이 없어.")
+                    }
                 },
                 error: function (xhr, status, error) {
                     console.log("요청 실패:");
@@ -80,16 +158,103 @@
         });
     });
 
+
+
+    /* cafe의 이름을 받아 DB에 저장된 해당 카페의 데이터 전체를 전송하는 부분 (DB에 저장된 모든 카페의 정보)*/
+    function processCafeInfo(data) {
+        // Kakao 지도 API 초기화
+        kakao.maps.load(function () {
+
+            // 데이터 처리
+            for (var i = 0; i < data.length; i++) {
+                if (data[i].dtlStateNm == "영업") {
+                    // console.log(data[i]);  cafeInfo 속성의 값 출력 -> 전송됨
+                    var bplcNm = data[i].bplcNm;
+                    // console.log(cafename);
+
+                    // 마커가 표시될 위치입니다
+                    var markerPosition = new kakao.maps.LatLng(data[i].y, data[i].x);
+
+                    // 마커를 생성합니다
+                    var marker = new kakao.maps.Marker({
+                        position: markerPosition // 좌표값 저장되어있으니
+                    });
+
+                    // 마커가 지도 위에 표시되도록 설정합니다
+                    marker.setMap(map);
+
+                    // 클릭 이벤트 리스너를 추가하는 함수 정의
+                    function addClickListener(marker, bplcNm) {
+                        kakao.maps.event.addListener(marker, 'click', function () {
+                            var infowindow = new kakao.maps.InfoWindow({
+                                content: bplcNm, // 가게 이름을 인포윈도우 내용으로 설정합니다
+                                removable: true // removeable 속성을 true로 설정하여 닫기 버튼을 표시합니다
+
+                            });
+                            console.log("마커 클릭했다");
+
+                            $.ajax({
+                                url:"/cafeinfo",
+                                type:"GET",
+                                data: {
+                                    bplcNm: bplcNm
+                                },
+                                success: function (response) {
+                                    console.log("전송 성공");
+                                    // console.log(bplcNm);
+                                },
+                                error:function (xhr,status,error) {
+                                    console.log('전송 실패');
+                                    console.log(error);
+                                    console.log(status);
+
+                                }
+                            })
+
+                            console.log(marker.getPosition()); // 좌표 출력 --> 나옴
+                            console.log(bplcNm); // 이름 출력 --> 나옴
+                            infowindow.open(map, marker);
+
+                        });
+
+
+
+                    }
+                    // 클릭 이벤트 리스너 추가
+                    addClickListener(marker, bplcNm);
+
+                }
+            }
+        });
+    }
+
+    // 요청 확인용
+    $(document).ready(function() {
+        $("#submitBtn").click(function() {
+            // AJAX GET 요청
+            $.ajax({
+                url: "/cafeinfo",
+                type: "GET",
+                success: function(response) {
+                    console.log("서버에 전송 성공");
+                    console.log(response); // 받은 데이터 출력
+                    // 원하는 동작 수행
+                    var cafeName = response.cafeName; // cafeName 속성을 사용하여 원하는 정보 추출
+                    console.log(cafeName); // 추출한 정보 출력
+                },
+                error: function(xhr, status, error) {
+                    console.log("서버에 전송 실패");
+                    console.log(error);
+                }
+            });
+        });
+    });
+
+
     /*현재 위치 찍는 부분*/
     $(document).ready(function () {
         $("#location").click(function () {
-            var mapContainer = document.getElementById('map'), // 지도를 표시할 div
-                mapOption = {
-                    center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
-                    level: 3 // 지도의 확대 레벨
-                };
 
-            var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
 
 // HTML5의 geolocation으로 사용할 수 있는지 확인합니다
             if (navigator.geolocation) {
@@ -144,5 +309,4 @@
     })
 </script>
 </body>
-
 </html>
