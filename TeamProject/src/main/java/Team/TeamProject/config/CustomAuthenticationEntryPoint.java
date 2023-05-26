@@ -15,5 +15,4 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
                          AuthenticationException authException) throws IOException, ServletException {
         response.sendRedirect(request.getContextPath() + "/sign/sign-in");
     }
-
 }

@@ -71,17 +71,16 @@ $(document).ready(function () {
         var title = $('#title').val();
         var contents = $('#summernote').summernote('code');
         var category = $('#category').val();
-        var contentsCheck = $('#summernote').summernote('code').replace(/<\/?[^>]+(>|$)/g, '').trim();
         if (title === '') {
             alert("제목을 입력하세요.");
             return;
         }
-        if (!contentsCheck) {
+        if (contents === '<p><br></p>') {
             alert("내용을 입력하세요.");
             return;
         }
-        console.log(contents);
-       var imageDtos = [];
+
+        var imageDtos = [];
 
         var imgTags = $(contents).find('img');
 
@@ -108,8 +107,9 @@ $(document).ready(function () {
             data: JSON.stringify(boardDto),
             success: function (response) {
                 // 저장 성공 시 처리
-                console.log('게시글 저장 성공');
-                // 게시글 저장 후 어떤 페이지로 이동할지 처리
+                alert('게시글이 성공적으로 저장되었습니다.');
+                // 게시글 저장 후 페이지 이동
+                window.location.href = '/board/list';
             },
             error: function (xhr, status, error) {
                 console.error('게시글 저장 실패');
@@ -120,7 +120,7 @@ $(document).ready(function () {
 
     $('#btnList').click(function () {
         // 목록으로 이동하는 처리
-        // ...
+        window.location.href = '/board/list';
     });
 
     // 페이지 벗어날때 게시물이 저장되지 않으면 로컬에 저장된 이미지들 삭제

@@ -10,14 +10,16 @@ import Team.TeamProject.repository.ImageRepository;
 import Team.TeamProject.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -60,6 +62,24 @@ public class BoardService {
             }
         }
         imageService.deleteImgList();
+    }
+
+    /**
+     * 게시물 목록 조회
+     */
+    public List<BoardDto> getBoardList() {
+        List<Board> boards = boardRepository.findAll();
+        return boards.stream()
+                .map(BoardDto :: toBoardDto)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 페이지 번호, 페이지 크기 전달
+     */
+    public Page<BoardDto> getBoardPage(Pageable pageable) {
+        Page<Board> boardPage = boardRepository.findAll(pageable);
+        return boardPage.map(BoardDto::toBoardDto);
     }
 
     /**

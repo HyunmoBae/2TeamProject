@@ -69,13 +69,6 @@ public class ImageService {
     }
 
     /**
-     * 업로드된 이미지 리스트 조회
-     */
-    public List<Image> getUploadedImages() {
-        return uploadedImages;
-    }
-
-    /**
      * DB에 저장되지 않은 로컬 이미지 비우기
      */
     public void deleteImgList() throws Exception {

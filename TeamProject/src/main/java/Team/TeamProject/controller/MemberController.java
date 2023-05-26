@@ -9,10 +9,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Principal;
@@ -30,7 +34,12 @@ public class MemberController {
      * 로그인 페이지
      */
     @GetMapping("/sign-in")
-    public String signInView() {
+    public String signInView(Principal principal) {
+        if (principal != null) {
+            // 로그인 한 경우 게시판 페이지로 이동
+            return "redirect:/board/list";
+        }
+        // 인증되지 않은 경우 로그인 페이지로 이동
         return "sign/sign-in";
     }
 

@@ -8,12 +8,18 @@ import Team.TeamProject.service.ImageService;
 import Team.TeamProject.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpSession;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,11 +35,25 @@ public class BoardController {
     private final ImageService imageService;
 
     /**
-     * 글 목록 페이지
+     * 게시글 목록 페이지
      */
     @GetMapping("/list")
     public String listView() {
-        return "/board/list";
+        return "board/list";
+    }
+
+    /**
+     * 게시글 목록 업데이트
+     */
+    @GetMapping("/list/update")
+    @ResponseBody
+    public ResponseEntity<?> getUpdatedBoardList(@PageableDefault(size = 10, sort="regTime", direction = Sort.Direction.DESC) Pageable pageable) {
+        try {
+            Page<BoardDto> boardPage = boardService.getBoardPage(pageable);
+            return ResponseEntity.ok(boardPage);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     /**
