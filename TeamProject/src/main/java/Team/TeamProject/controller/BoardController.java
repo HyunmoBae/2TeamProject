@@ -2,14 +2,12 @@ package Team.TeamProject.controller;
 
 import Team.TeamProject.dto.BoardDto;
 import Team.TeamProject.entity.Board;
-import Team.TeamProject.entity.Image;
 import Team.TeamProject.service.BoardService;
 import Team.TeamProject.service.ImageService;
 import Team.TeamProject.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -19,7 +17,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpSession;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,9 +44,9 @@ public class BoardController {
      */
     @GetMapping("/list/update")
     @ResponseBody
-    public ResponseEntity<?> getUpdatedBoardList(@PageableDefault(size = 10, sort="regTime", direction = Sort.Direction.DESC) Pageable pageable) {
+    public ResponseEntity<?> getUpdatedBoardList(@PageableDefault(size = 10, sort="regTime", direction = Sort.Direction.DESC) Pageable pageable, @RequestParam String categoryId) {
         try {
-            Page<BoardDto> boardPage = boardService.getBoardPage(pageable);
+            Page<BoardDto> boardPage = boardService.getBoardPage(pageable, categoryId);
             return ResponseEntity.ok(boardPage);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -102,7 +99,6 @@ public class BoardController {
         try {
             // 이미지 파일명 추출
             String fileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
-            log.info("fileName: {}", fileName);
             // 이미지 파일 삭제
             imageService.deleteFile(fileName);
 
@@ -119,7 +115,6 @@ public class BoardController {
     public ResponseEntity<String> saveBoard(@RequestBody BoardDto boardDto, Principal principal) {
         try {
             String id = principal.getName();
-            log.info("controller boardDto: {}", boardDto);
             boardService.saveBoard(boardDto, id);
             return ResponseEntity.ok("게시글이 저장되었습니다.");
         } catch (Exception e) {

@@ -26,11 +26,12 @@
   table {
     text-align: center;
   }
-  .truncate-text {
+  /* #article-list {
+    max-width : 100px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
+  } */
 </style>
 <body>
   <!-- Navigation-->
@@ -40,56 +41,23 @@
     <div class="row">
       <div class="col-2">
         <div class="list-group list-group-sm" id="list-tab" role="tablist" style="float: right;">
-          <a class="list-group-item list-group-item-action active" id="all" data-bs-toggle="pill" href="#all-content">전체게시판</a>
-          <a class="list-group-item list-group-item-action" id="free" data-bs-toggle="pill" href="#free-content">자유게시판</a>
-          <a class="list-group-item list-group-item-action" id="food" data-bs-toggle="pill" href="#food-content">음식점게시판</a>
-          <a class="list-group-item list-group-item-action" id="chicken" data-bs-toggle="pill" href="#chicken-content">치킨게시판</a>
-          <a class="list-group-item list-group-item-action" id="pizza" data-bs-toggle="pill" href="#pizza-content">피자게시판</a>
-          <a class="list-group-item list-group-item-action" id="snack" data-bs-toggle="pill" href="#snack-content">분식게시판</a>
-          <a class="list-group-item list-group-item-action" id="store" data-bs-toggle="pill" href="#store-content">편의점게시판</a>
-        </div>        
+          <a class="list-group-item list-group-item-action active" id="all" data-bs-toggle="pill" href="all-content">전체게시판</a>
+          <a class="list-group-item list-group-item-action" id="자유게시판" data-bs-toggle="pill" href="free-content">자유게시판</a>
+          <a class="list-group-item list-group-item-action" id="음식점" data-bs-toggle="pill" href="food-content">음식점게시판</a>
+          <a class="list-group-item list-group-item-action" id="치킨" data-bs-toggle="pill" href="chicken-content">치킨게시판</a>
+          <a class="list-group-item list-group-item-action" id="피자" data-bs-toggle="pill" href="pizza-content">피자게시판</a>
+          <a class="list-group-item list-group-item-action" id="분식" data-bs-toggle="pill" href="snack-content">분식게시판</a>
+          <a class="list-group-item list-group-item-action" id="편의점" data-bs-toggle="pill" href="store-content">편의점게시판</a>
+        </div>
       </div>
       <div class="col">
         <div class="tab-content">
-          <div class="tab-content">
-            <div class="tab-pane fade show active" id="all-content">
-              <!-- 전체게시판 컨텐츠 -->
-              <h1 class="h3 mb-3 fw-normal">전체게시판</h1>
-              <div th:replace="/fragments/writing-body.html"></div>
-            </div>
-            <div class="tab-pane fade" id="free-content">
-              <!-- 자유게시판 컨텐츠 -->
-              <h1 class="h3 mb-3 fw-normal">자유게시판</h1>
-              <div th:replace="/fragments/writing-body.html"></div>
-            </div>
-            <div class="tab-pane fade" id="food-content">
-              <!-- 음식점게시판 컨텐츠 -->
-              <h1 class="h3 mb-3 fw-normal">음식점게시판</h1>
-              <div th:replace="/fragments/writing-body.html"></div>
-            </div>
-            <div class="tab-pane fade" id="chicken-content">
-              <!-- 치킨게시판 컨텐츠 -->
-              <h1 class="h3 mb-3 fw-normal">치킨게시판</h1>
-              <div th:replace="/fragments/writing-body.html"></div>
-            </div>
-            <div class="tab-pane fade" id="pizza-content">
-              <!-- 피자게시판 컨텐츠 -->
-              <h1 class="h3 mb-3 fw-normal">피자게시판</h1>
-              <div th:replace="/fragments/writing-body.html"></div>
-            </div>
-            <div class="tab-pane fade" id="snack-content">
-              <!-- 분식게시판 컨텐츠 -->
-              <h1 class="h3 mb-3 fw-normal">분식게시판</h1>
-              <div th:replace="/fragments/writing-body.html"></div>
-            </div>
-            <div class="tab-pane fade" id="store-content">
-              <!-- 편의점게시판 컨텐츠 -->
-              <h1 class="h3 mb-3 fw-normal">편의점게시판</h1>
-              <div th:replace="/fragments/writing-body.html"></div>
-            </div>
+          <div class="tab-pane fade show active" id="all-content">
+            <h1 class="h3 mb-3 fw-normal">전체게시판</h1>
           </div>
+        </div>
+        <div th:replace="/fragments/list-body.html"></div>
       </div>
-    </div>
   </section>
   <!-- Footer-->
   <div th:replace="/fragments/footer.html :: fragment-footer"></div>

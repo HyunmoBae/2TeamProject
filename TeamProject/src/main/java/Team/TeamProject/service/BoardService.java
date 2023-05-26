@@ -64,21 +64,17 @@ public class BoardService {
         imageService.deleteImgList();
     }
 
-    /**
-     * 게시물 목록 조회
-     */
-    public List<BoardDto> getBoardList() {
-        List<Board> boards = boardRepository.findAll();
-        return boards.stream()
-                .map(BoardDto :: toBoardDto)
-                .collect(Collectors.toList());
-    }
 
     /**
-     * 페이지 번호, 페이지 크기 전달
+     * 페이지 번호, 페이지 크기 전달, 선택한 카테고리의 글 목록
      */
-    public Page<BoardDto> getBoardPage(Pageable pageable) {
-        Page<Board> boardPage = boardRepository.findAll(pageable);
+    public Page<BoardDto> getBoardPage(Pageable pageable, String categoryId) {
+        Page<Board> boardPage;
+        if(categoryId.equals("all")) {
+            boardPage = boardRepository.findAll(pageable);
+        } else {
+            boardPage = boardRepository.findByCategory(pageable, categoryId);
+        }
         return boardPage.map(BoardDto::toBoardDto);
     }
 
