@@ -11,4 +11,6 @@ import java.util.Optional;
 public interface BoardRepository extends JpaRepository<Board, Long> {
     Optional<Board> findByTitle(String title);
     Page<Board> findByCategory(Pageable pageable, String category);
+    Page<Board> findByCategoryAndTitleContaining(Pageable pageable, String category, String title);
+    Page<Board> findByTitleContaining(Pageable pageable, String title);
 }

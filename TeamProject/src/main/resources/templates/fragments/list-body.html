@@ -30,7 +30,7 @@
   </div>
   <div class="d-flex justify-content-end">
     <div sec:authorize="hasRole('ADMIN')">
-      <button type="button" class="btn btn-primary me-2" id="writing_admin">공지글쓰기</button>
+      <button type="button" class="btn btn-primary me-2" id="writing_notice" onclick="location.href='/board/writing/notice'">공지글쓰기</button>
     </div>
     <button type="button" class="btn btn-primary" id="writing" onclick="location.href='/board/writing'">글쓰기</button>
   </div>

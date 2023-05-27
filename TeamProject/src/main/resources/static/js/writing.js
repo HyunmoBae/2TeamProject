@@ -80,6 +80,13 @@ $(document).ready(function () {
             return;
         }
 
+        var boardType = 'GENERAL';
+        var currentURL = window.location.href;
+        if (currentURL.includes('/board/writing/notice')) {
+            boardType = 'NOTICE';
+            title = "[공지] " + title;
+        }
+
         var imageDtos = [];
 
         var imgTags = $(contents).find('img');
@@ -96,7 +103,8 @@ $(document).ready(function () {
             contents: contents,
             category: category,
             count: 0,
-            imageDtos: imageDtos
+            imageDtos: imageDtos,
+            boardType: boardType
         };
 
         // Ajax를 이용하여 게시글 저장 요청

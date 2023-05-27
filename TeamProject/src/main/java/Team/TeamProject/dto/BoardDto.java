@@ -1,5 +1,6 @@
 package Team.TeamProject.dto;
 
+import Team.TeamProject.constant.BoardType;
 import Team.TeamProject.entity.Board;
 import Team.TeamProject.entity.Image;
 import lombok.Data;
@@ -15,6 +16,7 @@ public class BoardDto {
     private String contents; // 글 내용
     private String category; // 카테고리
     private int count; // 조회수
+    private BoardType boardType; // 게시물 타입
     private LocalDateTime regTime;
 
     private MemberDto memberDto;
@@ -28,6 +30,7 @@ public class BoardDto {
         boardDto.setContents(board.getContents());
         boardDto.setCategory(board.getCategory());
         boardDto.setCount(board.getCount());
+        boardDto.setBoardType(board.getBoardType());
         boardDto.setRegTime(board.getRegTime());
         boardDto.setMemberDto(MemberDto.toMemberDto(board.getMember()));
 

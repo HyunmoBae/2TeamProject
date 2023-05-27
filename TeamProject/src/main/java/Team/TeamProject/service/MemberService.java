@@ -1,5 +1,6 @@
 package Team.TeamProject.service;
 
+import Team.TeamProject.constant.Role;
 import Team.TeamProject.dto.MemberAddressDto;
 import Team.TeamProject.dto.MemberDto;
 import Team.TeamProject.entity.Member;
@@ -179,6 +180,14 @@ public class MemberService implements UserDetailsService {
         member.setNick(memberDto.getNick());
         memberRepository.save(member);
         return member;
+    }
+
+    /**
+     * Member 권한 가져오기
+     */
+    public Role getMemberRole(String id) {
+        Optional<Member> optionalMember = memberRepository.findById(id);
+        return optionalMember.get().getRole();
     }
 
     /**

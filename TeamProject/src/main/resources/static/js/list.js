@@ -1,9 +1,10 @@
 var currentPage = 0; // 현재 페이지 변수를 추가합니다.
 var page = 0;
 var categoryId = "all";
+var search = "";
 $(document).ready(function () {
     // 페이지 로드 시 게시글 목록을 비동기적으로 가져오는 함수 호출
-    loadArticles(page, categoryId); // 초기 페이지를 0으로 설정
+    loadArticles(page, categoryId, search); // 초기 페이지를 0으로 설정
 
     // 탭 클릭 이벤트 처리
     $(".list-group-item").on("click", function () {
@@ -25,17 +26,26 @@ $(document).ready(function () {
         tabContent.append(tabPane);
 
         // 게시글 목록 로드
-        loadArticles(page, categoryId);
+        loadArticles(page, categoryId, search);
+    });
+
+    $("#search").on("input", function() {
+        search = $(this).val();
+
+        // 게시글 목록 로드
+        loadArticles(page, categoryId, search);
     });
 });
 
-function loadArticles(page, categoryId) {
+
+function loadArticles(page, categoryId, search) {
     $.ajax({
         url: '/board/list/update', // 게시글 목록을 가져올 API 엔드포인트의 URL
         type: 'GET',
         data: {
             page: page,
-            categoryId:categoryId
+            categoryId:categoryId,
+            search: search
         },
         success: function (response) {
             // 성공적으로 응답을 받았을 때 처리하는 로직
@@ -53,22 +63,48 @@ function loadArticles(page, categoryId) {
 function updateArticleList(boardList) {
     var tbody = $("#article-list");
     tbody.empty();
+    var notice = [];
+    var general = [];
 
-    for (var i = 0; i < boardList.length; i++) {
-        var board = boardList[i];
+    for(var i = 0; i < boardList.length; i++) {
+        if(boardList[i].boardType == "NOTICE") {
+            notice.push(boardList[i]); 
+        } else {
+            general .push(boardList[i]);
+        }
+    }
+
+    var BoardList = notice.concat(general);
+    for (var i = 0; i < BoardList.length; i++) {
+        var board = BoardList[i];
         var row = $('<tr></tr>');
         row.append($('<th></th>').attr('scope', 'row').text(board.board_idx));
         row.append($('<td></td>').text(board.memberDto.nick));
         row.append($('<td></td>').text(board.category));
-        row.append($('<td></td>').text(board.title).css({
-            'max-width': '100px',
-            'white-space': 'nowrap',
-            'overflow': 'hidden',
-            'text-overflow': 'ellipsis'
-          }));
-        // row.append($('<td></td>').html('<strong>' + board.title + '</strong>'));
+        if (board.boardType == "NOTICE") {
+            row.append($('<td></td>').html('<strong>' + board.title + '</strong>').css({
+                'max-width': '100px',
+                'white-space': 'nowrap',
+                'overflow': 'hidden',
+                'text-overflow': 'ellipsis'
+            }));
+        } else {
+            row.append($('<td></td>').text(board.title).css({
+                'max-width': '100px',
+                'white-space': 'nowrap',
+                'overflow': 'hidden',
+                'text-overflow': 'ellipsis'
+            }));
+        }
         row.append($('<td></td>').text(board.count));
         row.append($('<td></td>').text(moment(board.regTime).format('YYYY-MM-DD HH:mm')));
+
+        // 클릭 이벤트 처리
+        row.click(function () {
+            var board_idx = $(this).find('th').text();
+            // 페이지 이동
+            window.location.href = "/board/detail?board_idx=" + board_idx;
+        });
 
         tbody.append(row);
     }
@@ -87,7 +123,7 @@ function updatePagination(page, totalPages) {
     previousButton.on('click', function() {
       if (currentPage > 0) {
         currentPage -= 5; // 이전 페이지로 이동하는 경우 5페이지씩 감소시킵니다.
-        loadArticles(currentPage, categoryId);
+        loadArticles(currentPage, categoryId, search);
       }
     });
     pagination.append(previousButton);
@@ -99,7 +135,7 @@ function updatePagination(page, totalPages) {
             var pageButton = $('<li class="page-item"><a class="page-link"></a></li>');
             pageButton.find('.page-link').text(pageNumber).attr('data-page', page).on('click', function () {
                 var clickedPage = parseInt($(this).attr('data-page'));
-                loadArticles(clickedPage, categoryId);
+                loadArticles(clickedPage, categoryId, search);
             });
             pagination.append(pageButton);
         })(i);
@@ -110,7 +146,7 @@ function updatePagination(page, totalPages) {
     nextButton.on('click', function () {
         if (currentPage + maxPageButtons < totalPages) {
             currentPage += 5; // 다음 페이지로 이동하는 경우 5페이지씩 증가시킵니다.
-            loadArticles(currentPage, categoryId);
+            loadArticles(currentPage, categoryId, search);
         }
     });
     pagination.append(nextButton);

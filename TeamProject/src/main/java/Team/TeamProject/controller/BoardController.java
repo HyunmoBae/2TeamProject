@@ -1,5 +1,6 @@
 package Team.TeamProject.controller;
 
+import Team.TeamProject.constant.Role;
 import Team.TeamProject.dto.BoardDto;
 import Team.TeamProject.entity.Board;
 import Team.TeamProject.service.BoardService;
@@ -40,13 +41,14 @@ public class BoardController {
     }
 
     /**
-     * 게시글 목록 업데이트
+     * 게시글 목록 보여주기, 페이지네이션 기능
      */
     @GetMapping("/list/update")
     @ResponseBody
-    public ResponseEntity<?> getUpdatedBoardList(@PageableDefault(size = 10, sort="regTime", direction = Sort.Direction.DESC) Pageable pageable, @RequestParam String categoryId) {
+    public ResponseEntity<?> getUpdatedBoardList(@PageableDefault(size = 10, sort="regTime", direction = Sort.Direction.DESC) Pageable pageable,
+                                                 @RequestParam String categoryId, @RequestParam String search) {
         try {
-            Page<BoardDto> boardPage = boardService.getBoardPage(pageable, categoryId);
+            Page<BoardDto> boardPage = boardService.getBoardPage(pageable, categoryId, search);
             return ResponseEntity.ok(boardPage);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -62,11 +64,41 @@ public class BoardController {
             String id = principal.getName();
             String nick = memberService.viewNick(id);
             model.addAttribute("nick", nick);
-            return "/board/writing";
+            return "board/writing";
         } catch (Exception e) {
-            model.addAttribute("error", e.getMessage());
-            return null;
+            return "redirect:/board/list";
         }
+    }
+
+    /**
+     * 공지글 작성 페이지
+     */
+    @GetMapping("/writing/notice")
+    public String writingNoticeView(Model model, Principal principal) {
+        try{
+            String id = principal.getName();
+            String nick = memberService.viewNick(id);
+            Role role = memberService.getMemberRole(id);
+
+            if(role == Role.ADMIN) {
+                model.addAttribute("nick", nick);
+                return "board/writing";
+            } else {
+                return "redirect:/board/writing";
+            }
+        } catch (Exception e) {
+            return "redirect:/board/list";
+        }
+    }
+
+    /**
+     * 글 상세 페이지
+     */
+    @GetMapping("/detail")
+    public String detailView(@RequestParam Long board_idx, Model model) {
+        BoardDto boardDto = boardService.getBoardDetail(board_idx);
+        model.addAttribute("board", boardDto);
+        return "board/detail";
     }
 
     /**
@@ -141,7 +173,8 @@ public class BoardController {
     @GetMapping("/test")
     public ResponseEntity<?> test1() {
         Board board = boardService.test1();
+        log.info("board: {}", board);
+        log.info("board: {}", board.getContents());
         return ResponseEntity.ok().body(board.getContents());
     }
-
 }

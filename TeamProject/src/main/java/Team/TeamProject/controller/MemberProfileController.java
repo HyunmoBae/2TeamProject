@@ -25,7 +25,7 @@ public class MemberProfileController {
     @GetMapping("/check-password")
     public String checkPwView(HttpSession session){
         session.removeAttribute("changePasswordAllowed");
-        return "/profile/check-password";
+        return "profile/check-password";
     }
 
     /**
@@ -52,7 +52,7 @@ public class MemberProfileController {
     public String changePwView(HttpSession session) {
         Boolean changePasswordAllowed = (Boolean) session.getAttribute("changePasswordAllowed");
         if (changePasswordAllowed != null && changePasswordAllowed) {
-            return "/profile/manage-profiles";
+            return "profile/manage-profiles";
         } else {
             return "redirect:/profile/check-password";
         }

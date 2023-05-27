@@ -1,5 +1,6 @@
 package Team.TeamProject.entity;
 
+import Team.TeamProject.constant.BoardType;
 import Team.TeamProject.dto.BoardDto;
 import Team.TeamProject.dto.ImageDto;
 import lombok.AllArgsConstructor;
@@ -28,6 +29,9 @@ public class Board extends BaseEntity {
     private String category; // 카테고리
     private int count; // 조회수
 
+    @Enumerated(EnumType.STRING)
+    private BoardType boardType; // 게시글 타입 NOTICE or GENERAL
+
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
@@ -40,6 +44,7 @@ public class Board extends BaseEntity {
         board.setContents(boardDto.getContents());
         board.setCategory(boardDto.getCategory());
         board.setCount(boardDto.getCount());
+        board.setBoardType(boardDto.getBoardType());
         board.setMember(member);
 
         List<Image> images = new ArrayList<>();

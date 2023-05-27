@@ -1,5 +1,6 @@
 package Team.TeamProject.service;
 
+import Team.TeamProject.constant.BoardType;
 import Team.TeamProject.dto.BoardDto;
 import Team.TeamProject.dto.ImageDto;
 import Team.TeamProject.entity.Board;
@@ -68,21 +69,39 @@ public class BoardService {
     /**
      * 페이지 번호, 페이지 크기 전달, 선택한 카테고리의 글 목록
      */
-    public Page<BoardDto> getBoardPage(Pageable pageable, String categoryId) {
+    public Page<BoardDto> getBoardPage(Pageable pageable, String categoryId, String search) {
         Page<Board> boardPage;
         if(categoryId.equals("all")) {
-            boardPage = boardRepository.findAll(pageable);
+            if(search.isBlank()){
+                boardPage = boardRepository.findAll(pageable);
+            } else {
+                boardPage = boardRepository.findByTitleContaining(pageable, search);
+            }
         } else {
-            boardPage = boardRepository.findByCategory(pageable, categoryId);
+            if(search.isBlank()){
+                boardPage = boardRepository.findByCategory(pageable, categoryId);
+            }
+            else {
+                boardPage = boardRepository.findByCategoryAndTitleContaining(pageable, categoryId, search);
+            }
         }
         return boardPage.map(BoardDto::toBoardDto);
+    }
+
+    /**
+     * 글 찾기
+     */
+    public BoardDto getBoardDetail(Long board_idx) {
+        Optional<Board> optionalBoard = boardRepository.findById(board_idx);
+        BoardDto boardDto = BoardDto.toBoardDto(optionalBoard.get());
+        return boardDto;
     }
 
     /**
      * 게시물 상세 보기
      */
     public Board test1() {
-        Optional<Board> optionalBoard = boardRepository.findByTitle("저장되지 않는 사진들");
+        Optional<Board> optionalBoard = boardRepository.findByTitle("test31");
         return optionalBoard.get();
     }
 }
