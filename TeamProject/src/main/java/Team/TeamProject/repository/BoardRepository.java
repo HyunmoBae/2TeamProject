@@ -9,8 +9,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BoardRepository extends JpaRepository<Board, Long> {
-    Optional<Board> findByTitle(String title);
-    Page<Board> findByCategory(Pageable pageable, String category);
-    Page<Board> findByCategoryAndTitleContaining(Pageable pageable, String category, String title);
-    Page<Board> findByTitleContaining(Pageable pageable, String title);
+    List<Board> findByCategory(String category);
+    List<Board> findByCategoryAndTitleContaining(String category, String title);
+    List<Board> findByTitleContaining(String title);
+
+    List<Board> findByMemberId(String memberId);
+    List<Board> findByMemberIdAndCategory(String id, String category);
+    List<Board> findByMemberIdAndCategoryAndTitleContaining(String id, String category, String title);
+    List<Board> findByMemberIdAndTitleContaining(String id, String title);
 }

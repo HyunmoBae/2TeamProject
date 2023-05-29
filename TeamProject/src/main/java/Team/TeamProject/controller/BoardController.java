@@ -2,7 +2,6 @@ package Team.TeamProject.controller;
 
 import Team.TeamProject.constant.Role;
 import Team.TeamProject.dto.BoardDto;
-import Team.TeamProject.entity.Board;
 import Team.TeamProject.service.BoardService;
 import Team.TeamProject.service.ImageService;
 import Team.TeamProject.service.MemberService;
@@ -10,13 +9,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 
 import java.security.Principal;
 import java.util.ArrayList;
@@ -45,7 +44,7 @@ public class BoardController {
      */
     @GetMapping("/list/update")
     @ResponseBody
-    public ResponseEntity<?> getUpdatedBoardList(@PageableDefault(size = 10, sort="regTime", direction = Sort.Direction.DESC) Pageable pageable,
+    public ResponseEntity<?> getUpdatedBoardList(@PageableDefault(size = 10) Pageable pageable,
                                                  @RequestParam String categoryId, @RequestParam String search) {
         try {
             Page<BoardDto> boardPage = boardService.getBoardPage(pageable, categoryId, search);
@@ -97,8 +96,50 @@ public class BoardController {
     @GetMapping("/detail")
     public String detailView(@RequestParam Long board_idx, Model model) {
         BoardDto boardDto = boardService.getBoardDetail(board_idx);
+        boardService.increaseCount(board_idx);
         model.addAttribute("board", boardDto);
         return "board/detail";
+    }
+
+    /**
+     * 글 수정 페이지
+     */
+    @GetMapping("/modify")
+    public String modifyView(@RequestParam Long board_idx, Principal principal, Model model) {
+        BoardDto boardDto = boardService.getBoardDetail(board_idx);
+        String id = principal.getName();
+        String boardId = boardDto.getMemberDto().getId();
+        log.info("boardDto: {}", boardDto);
+        log.info("imageDto: {}", boardDto.getImageDtos().size());
+        if(id.equals(boardId)){
+            model.addAttribute("board", boardDto);
+            return "board/modify";
+        } else {
+            return "redirect:/board/detail?board_idx=" + board_idx;
+        }
+    }
+
+    /**
+     * 글 수정 내용
+     */
+    @GetMapping("/modify/detail")
+    public ResponseEntity<?> modifyDetailView(@RequestParam Long board_idx) {
+        BoardDto boardDto = boardService.getBoardDetail(board_idx);
+        return ResponseEntity.ok(boardDto);
+    }
+
+    /**
+     * 글 수정
+     */
+    @PostMapping("/modifyBoard")
+    public ResponseEntity<String> modifyBoard(@RequestBody BoardDto boardDto, Principal principal) {
+        try {
+            String id = principal.getName();
+            boardService.modifyBoard(boardDto, id);
+            return ResponseEntity.ok("게시글이 수정되었습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     /**
@@ -168,13 +209,28 @@ public class BoardController {
     }
 
     /**
-     * 게시글 상세보기
+     * 조회수
      */
-    @GetMapping("/test")
-    public ResponseEntity<?> test1() {
-        Board board = boardService.test1();
-        log.info("board: {}", board);
-        log.info("board: {}", board.getContents());
-        return ResponseEntity.ok().body(board.getContents());
+    @GetMapping("/detail/count")
+    public ResponseEntity<?> countView(@RequestParam Long board_idx) {
+        try {
+            BoardDto boardDto = boardService.getBoardDetail(board_idx);
+            return ResponseEntity.ok(boardDto.getCount());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    /**
+     * 글 삭제
+     */
+    @GetMapping("/delete")
+    public ResponseEntity<?> deleteBoard(@RequestParam Long board_idx, Principal principal) {
+        try {
+            boardService.deleteBoard(board_idx, principal.getName());
+            return ResponseEntity.ok("글 삭제가 완료되었습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

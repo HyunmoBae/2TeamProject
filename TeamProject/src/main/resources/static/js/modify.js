@@ -1,4 +1,39 @@
 $(document).ready(function () {
+    var board_idx = $("#board-details").data("board-id");
+    var boardType = "";
+    $.ajax({
+        url: '/board/modify/detail',
+        type: 'GET',
+        data: { board_idx: board_idx },
+        success: function (boardDto) {
+            $("#summernote").summernote('code',  boardDto.contents);
+            $("#category").val(boardDto.category);
+            var title = boardDto.title;
+            boardType = boardDto.boardType;
+            if(boardDto.boardType == "NOTICE") {
+                $("#title").val(title.substring(title.indexOf("]") + 2));
+            } else {
+                $("#title").val(title);
+            }
+
+            var contents = $('#summernote').summernote('code');
+            var imageDtos = [];
+        
+            var imgTags = $(contents).find('img');
+        
+            imgTags.each(function () {
+                var imgSrc = $(this).attr('src');
+                var imgName = imgSrc.substring(imgSrc.lastIndexOf('/') + 1);
+                imageDtos.push({ imgName: imgName });
+            });
+            console.log("imageDtos:", imageDtos);
+        },
+        error: function (xhr, status, error) {
+            console.error(error);
+        }
+    });
+
+    
     $('#summernote').summernote({
         height: 600,                 // 에디터 높이
         minHeight: null,             // 최소 높이
@@ -24,7 +59,6 @@ $(document).ready(function () {
             },
             onMediaDelete: function (target) {
                 deleteSummernoteImageFile(target[0].src);
-                console.log(target[0].src);
             }
         }
     });
@@ -63,12 +97,12 @@ $(document).ready(function () {
           },
           error: function (xhr, status, error) {
             console.error('이미지 삭제 실패');
-            console.error(xhr.responseText);
+            console.error(error);
           }
         });
       }
 
-    $('#btnSave').click(function () {
+    $('#btnModify').click(function () {
         var title = $('#title').val();
         var contents = $('#summernote').summernote('code');
         var category = $('#category').val();
@@ -81,10 +115,7 @@ $(document).ready(function () {
             return;
         }
 
-        var boardType = 'GENERAL';
-        var currentURL = window.location.href;
-        if (currentURL.includes('/board/writing/notice')) {
-            boardType = 'NOTICE';
+        if (boardType == "NOTICE") {
             title = "[공지] " + title;
         }
 
@@ -100,36 +131,36 @@ $(document).ready(function () {
         
         // BoardDto 생성
         var boardDto = {
+            board_idx: board_idx,
             title: title,
             contents: contents,
             category: category,
-            count: 0,
-            imageDtos: imageDtos,
-            boardType: boardType
+            imageDtos: imageDtos
         };
 
         // Ajax를 이용하여 게시글 저장 요청
         $.ajax({
             type: 'POST',
-            url: '/board/saveBoard/',
+            url: '/board/modifyBoard',
             contentType: 'application/json',
             data: JSON.stringify(boardDto),
             success: function (response) {
-                // 저장 성공 시 처리
-                alert('게시글이 성공적으로 저장되었습니다.');
-                // 게시글 저장 후 페이지 이동
-                window.location.href = '/board/list';
+                // 수정 성공 시 처리
+                alert('게시글이 성공적으로 수정되었습니다.');
+                // 게시글 수정 후 페이지 이동
+                window.location.href = '/board/detail?board_idx=' + board_idx;
             },
             error: function (xhr, status, error) {
-                console.error('게시글 저장 실패');
+                console.error('게시글 수정 실패');
                 console.error(xhr.responseText);
+                alert('게시글 수정을 실패했습니다.');
             }
         });
     });
 
-    $('#btnList').click(function () {
+    $('#btnCancel').click(function () {
         // 목록으로 이동하는 처리
-        window.location.href = '/board/list';
+        window.location.href = '/board/detail?board_idx=' + board_idx;
     });
 
     // 페이지 벗어날때 게시물이 저장되지 않으면 로컬에 저장된 이미지들 삭제

@@ -35,12 +35,49 @@ $(document).ready(function () {
         // 게시글 목록 로드
         loadArticles(page, categoryId, search);
     });
-});
+    
+    $(document).on('change', '#flexRadioDefault1', function () {
+        var isChecked = $(this).prop('checked');
+        // 모든 체크 박스들의 상태 변경
+        $('#article-list input[type="checkbox"]').prop('checked', isChecked);
+        var checkedValues = getCheckedValues();
+    });
 
+    $(document).on("click", "#deleteBtn", function() {
+        var confirmDelete = confirm("정말 삭제하시겠습니까?");
+        if(confirmDelete) {
+            var checkedValues = getCheckedValues();
+            console.log(checkedValues);
+            if(checkedValues != null && checkedValues.length != 0){
+                console.log(checkedValues);
+                $.ajax({
+                    url:"/profile/my-writing/delete",
+                    type: "POST",
+                    dataType: "json",
+                    contentType: "application/json", // JSON 형식으로 데이터 전송
+                    data: JSON.stringify(checkedValues), // JSON 데이터로 변환하여 전송
+                    success: function (response) {
+                        // 삭제 성공 시 처리하는 로직
+                        console.log('삭제되었습니다.');
+                        console.log(response);
+                        // 추가적인 처리 로직을 구현하거나 페이지를 새로고침할 수 있습니다.
+                    },
+                    error: function (xhr) {
+                        // 요청이 실패했을 때 처리하는 로직
+                        console.error(xhr.responseText);
+                    }
+                });
+            } else{
+                console.log('삭제할 글을 선택해주세요.');
+            }
+        }
+    });
+
+});
 
 function loadArticles(page, categoryId, search) {
     $.ajax({
-        url: '/board/list/update', // 게시글 목록을 가져올 API 엔드포인트의 URL
+        url: '/profile/my-writing/update', // 게시글 목록을 가져올 API 엔드포인트의 URL
         type: 'GET',
         data: {
             page: page,
@@ -62,13 +99,32 @@ function loadArticles(page, categoryId, search) {
 
 function updateArticleList(boardList) {
     var tbody = $("#article-list");
+    var thead = $("#table-contents");
     tbody.empty();
+    thead.empty();
+        // 헤더 행 추가
+    var headerRow = $('<tr></tr>');
+    headerRow.append($('<th scope="col"><input class="form-check-input" type="checkbox" name="flexRadioDefault" id="flexRadioDefault1"></th>'));
+    headerRow.append($('<th scope="col">No.</th>'));
+    headerRow.append($('<th scope="col">카테고리</th>'));
+    headerRow.append($('<th scope="col">제목</th>'));
+    headerRow.append($('<th scope="col">조회수</th>'));
+    headerRow.append($('<th scope="col">작성날짜</th>'));
+    thead.append(headerRow);
+    
     for (var i = 0; i < boardList.length; i++) {
         (function () {
             var board = boardList[i];
             var board_idx = board.board_idx;
             var row = $('<tr></tr>');
-            row.append($('<th></th>').attr('scope', 'row').text(board.board_idx));
+            var checkbox = $('<input>').attr({
+                'type': 'checkbox',
+                'name': 'board-checkbox',
+                'value': board.board_idx,
+                'class': 'checkbox-css' // CSS class for the checkbox
+            });
+            var checkboxCell = $('<th></th>').append(checkbox);
+            row.append(checkboxCell);
             row.append($('<td></td>').text(board.memberDto.nick));
             row.append($('<td></td>').text(board.category));
             if (board.boardType == "NOTICE") {
@@ -90,11 +146,16 @@ function updateArticleList(boardList) {
             row.append($('<td></td>').text(moment(board.regTime).format('YYYY-MM-DD HH:mm')));
 
             // 클릭 이벤트 처리
-            row.click(function () {
-                // var board_idx = $(this).find('th').text();
+            row.find('td:not(:first-child)').click(function () {
                 // 페이지 이동
                 window.location.href = "/board/detail?board_idx=" + board_idx;
             });
+
+            // 체크 박스 클릭 이벤트 처리
+            checkbox.on('click', function () {
+                var checkedValues = getCheckedValues(); // getCheckedValues 함수를 호출하여 선택된 값들을 가져옵니다.
+            });
+
             tbody.append(row);
         })();
     }
@@ -140,4 +201,12 @@ function updatePagination(page, totalPages) {
         }
     });
     pagination.append(nextButton);
+}
+
+function getCheckedValues() {
+    var checkedValues = [];
+    $('#article-list input[type="checkbox"]:checked').each(function () {
+        checkedValues.push(parseInt($(this).val()));
+    });
+    return checkedValues;
 }

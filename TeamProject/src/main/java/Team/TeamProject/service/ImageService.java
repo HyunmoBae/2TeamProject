@@ -1,7 +1,9 @@
 package Team.TeamProject.service;
 
 import Team.TeamProject.dto.ImageDto;
+import Team.TeamProject.entity.Board;
 import Team.TeamProject.entity.Image;
+import Team.TeamProject.repository.BoardRepository;
 import Team.TeamProject.repository.ImageRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +21,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class ImageService {
     private final ImageRepository imageRepository;
+    private final BoardRepository boardRepository;
     private static final String UPLOAD_PATH = "C:/summernote_image/"; // 이미지 업로드 경로 설정
     private List<Image> uploadedImages = new ArrayList<>(); // 업로드된 이미지 리스트
 
@@ -55,7 +58,9 @@ public class ImageService {
             if (deleteFile.delete()) {
                 imageRepository.delete(image);
                 if(uploadedImages != null && uploadedImages.isEmpty()) {
-                    uploadedImages.remove(image);
+                    if (uploadedImages.contains(image)) {
+                        uploadedImages.remove(image);
+                    }
                 }
                 log.info("파일을 삭제하였습니다.");
             } else {
@@ -64,7 +69,7 @@ public class ImageService {
             }
         } else {
             log.info("파일이 존재하지 않습니다.");
-            throw new FileNotFoundException("파일이 존재하지 않습니다.");
+            throw new FileNotFoundException(fileName +": 파일이 존재하지 않습니다.");
         }
     }
 
