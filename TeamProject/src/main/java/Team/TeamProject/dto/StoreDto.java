@@ -31,23 +31,25 @@ public class StoreDto {
     private Interest interest; //관심
 
     // 개방자치단체코드. 데이터갱신일자, 인허가취소일자 제외
-    public Store StoreDtoToEntity(StoreDto storedto){
-        var storeEntity = Store.builder()
-                .store_idx(storedto.getStore_idx())
-                .apvPermYmd(storedto.getApvPermYmd())
-                .bplcNm(storedto.getBplcNm())
-                .dtlStateNm(storedto.getDtlStateNm())
-                .opnSvcNm(storedto.getOpnSvcNm())
-                .rdnPostNo(storedto.getRdnPostNo())
-                .rdnWhlAddr(storedto.getRdnWhlAddr())
-                .siteTel(storedto.getSiteTel())
-                .siteWhlAddr(storedto.getSiteWhlAddr())
-                .uptaeNm(storedto.getUptaeNm())
-                .x(storedto.getX())
-                .y(storedto.getY())
+
+
+    public StoreDto StoreEntityToDto(Store store){
+        var dto = StoreDto.builder()
+                .store_idx(store.getStore_idx())
+                .apvPermYmd(store.getApvPermYmd())
+                .bplcNm(store.getBplcNm())
+                .dtlStateNm(store.getDtlStateNm())
+                .opnSvcNm(store.getOpnSvcNm())
+                .rdnPostNo(store.getRdnPostNo())
+                .rdnWhlAddr(store.getRdnWhlAddr())
+                .siteTel(store.getSiteTel())
+                .siteWhlAddr(store.getSiteWhlAddr())
+                .uptaeNm(store.getUptaeNm())
+                .x(store.getX())
+                .y(store.getY())
                 .build();
 
-        return storeEntity;
+        return dto;
     }
 
 }

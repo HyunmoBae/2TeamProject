@@ -25,14 +25,15 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent"></div>
         <!-- 지도 위에 표시될 마커 카테고리 -->
         <div class="category-wrapper">
-            <button class="category-button" id="cafe">카페</button>
-            <button class="category-button">음식점</button>
-            <button class="category-button" id="chickenMenu" onclick="changeMarker('chicken')">치킨</button>
-            <button class="category-button" id="pizzaMenu" onclick="changeMarker('pizza')">피자</button>
-            <button class="category-button">분식</button>
-            <button class="category-button">편의점</button>
-            <button class="category-button" id="location">현위치</button>
-<!--            <button class="category-button" id="submitBtn">확인용</button>-->
+                <button class="category-button" id="커피숍">카페</button>
+                <button class="category-button" id="한식">한식</button>
+                <button class="category-button" id="일식">일식</button>
+                <button class="category-button" id="중국식">중식</button>
+                <button class="category-button" id="통닭(치킨)">치킨</button>
+                <button class="category-button" id="pizza">피자</button>
+                <button class="category-button" id="분식">분식</button>
+                <button class="category-button" id="편의점">편의점</button>
+                <button class="category-button" id="location">현위치</button>
 
         </div>
 
@@ -48,75 +49,71 @@
 <section class="py-4">
 
     <div class="map_wrap">
-    <div id="map" style="width:100%;height:350px;"></div>
+        <div id="map" style="width:100%;height:350px;"></div>
+        <!--가게 정보 (전체 리스트 출력)-->
         <div id="menu_wrap2" class="bg_white">
             <div class="option">
                 <div>
-                        <h2>검색결과</h2>
+                    <form onsubmit="searchPlaces(); return false;">
+                        키워드 : <input type="text" value="검색어 입력" id="keyword" size="15">
+                        <button type="submit">검색하기</button>
+                    </form>
                 </div>
             </div>
-            <hr style="border-width: 2px; border-color: black;">
-
-            <ul id="placesList" th:each="store:${cafeInfo}">
-                <li>
-                    <span class="item"></span>
-                    <div class="info">
-                        <span>뜨긴함?</span>
-                        <h5 th:text="${store.bplcNm}"></h5> <!--ㅜㅜ 안나옴-->
-                        <span th:text="${store.uptaeNm}"></span><br>
-                        <span th:text="${store.rdnWhlAddr}"></span><br>
-                        <span class="jibun gray" th:text="${store.siteWhlAddr}"></span><br>
-                        <span class="tel" th:text="${store.siteTel}"></span>
-                    </div>
-                </li>
-            </ul>
+            <hr>
+            <ul id="placesList"></ul>
             <div id="pagination"></div>
         </div>
 
 
+        <!--가게 상세 정보-->
         <div id="menu_wrap" class="bg_white">
             <div class="option">
-                        <hr/>
-                        <button type="submit"  class="previous-button">이전으로</button>
+                <hr/>
+                <button type="submit" class="previous-button">이전으로</button>
                 <div class="button-container">
-                    <form id="cafeinfo">
-                        <li id="a">
-                            <span>상호명</span>
+                    <form id="storeinfo">
+                        <li id="bplcNm">
+                            <span>상호명:</span>
+                            <span></span>
                         </li>
-                        <li>
-                            <span>업체구분</span>
+                        <li id="uptaeNm">
+                            <span>업체구분:</span>
+                            <span></span>
                         </li>
-                        <li>
-                            <span>주소</span>
+                        <!--도로명 주소 사용-->
+                        <li id="rdnWhlAddr">
+                            <span>도로명주소:</span>
+                            <span></span>
                         </li>
-                        <li>
-                            <span>영업시간</span>
+                        <li id="dtlStateNm">
+                            <span>영업상태:</span>
+                            <span></span>
                         </li>
-                        <li>
-                            <span>영업상태</span>
-                        </li>
-                        <li>
-                            <span>전화번호</span>
+                        <li id="siteTel">
+                            <span>전화번호:</span>
+                            <span></span>
                         </li>
 
                     </form>
                 </div>
             </div>
         </div>
-    <script type="text/javascript"
-            src="//dapi.kakao.com/v2/maps/sdk.js?appkey=406784a1fe10d8f90dc9afa5b43d84c9"></script>
-    <script>
-        var mapContainer = document.getElementById('map'), // 지도를 표시할 div
-            mapOption = {
-                // 좌표는 위도 (y) , 경도 (x) 로 되어있음.
-                center: new kakao.maps.LatLng(35.88662909733128, 128.6355186755777), // 지도의 중심좌표
-                level: 3 // 지도의 확대 레벨
-            };
+        <script type="text/javascript"
+                src="//dapi.kakao.com/v2/maps/sdk.js?appkey=406784a1fe10d8f90dc9afa5b43d84c9"></script>
+        <script>
+            var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+                mapOption = {
+                    // 좌표는 위도 (y) , 경도 (x) 로 되어있음.
+                    center: new kakao.maps.LatLng(35.88662909733128, 128.6355186755777), // 지도의 중심좌표
+                    level: 3 // 지도의 확대 레벨
+                };
 
-        // 지도를 표시할 div와  지도 옵션으로  지도를 생성합니다
-        var map = new kakao.maps.Map(mapContainer, mapOption);
+            // 지도를 표시할 div와  지도 옵션으로  지도를 생성합니다
+            var map = new kakao.maps.Map(mapContainer, mapOption);
 
-    </script>
+        </script>
+    </div>
 </section>
 <!-- Footer-->
 <div th:replace="/fragments/footer.html :: fragment-footer"></div>
@@ -127,25 +124,54 @@
 <script th:inline="javascript">
 
     // 모델 데이터 가져오기
-    var cafeInfo = /*[[${cafeInfo}]]*/ [];
+    var storeList = /*[[${storeList}]]*/ {};
 
     /* 카페 마커 찍는 부분*/
     $(document).ready(function () {
 
         // 테스트 버튼 클릭 이벤트 핸들러 등록
-        $("#cafe").click(function () {
-            console.log("카페 불러오기 버튼 클릭 했다.");
+        $(".category-button").click(function () {
+            var buttonId = $(this).attr("id");
+            var url = "/test?uptae=" + buttonId;
+
+            console.log(buttonId + " 정보 불러오기 버튼 클릭 했다.");
             // Ajax GET 요청
             $.ajax({
-                url: "/test",
+                url: url,
                 method: "GET",
                 success: function (response) {
+                    var storeList = response;
                     console.log("버튼 누르고 전송");
-                    // for (var i = 0; i < response.length; i++) {
-                    //     var cafe = response[i];
-                    //     console.log(cafe);
-                    // }
-                    processCafeInfo(response); // 받은 데이터 처리하는 함수 호출 및 마커찍기.
+                    console.log(storeList);
+                    /******현모님 부분******/
+                    var placesList = $("#placesList");
+
+                    // 이전에 표시된 내용 제거
+                    placesList.empty();
+
+                    // 받은 데이터를 반복하면서 <li> 요소 추가
+                    for (var i = 0; i < storeList.length; i++) {
+
+                        var store = storeList[i];
+                        var listItem = $("<li></li>");
+
+                        // <li> 요소 내용 구성
+                        listItem.append('<span class="item"></span>');
+                        listItem.append('<div class="info">' +
+                            '<h5>' + store.bplcNm + '</h5>' +
+                            '<span>' + store.uptaeNm + '</span><br>' +
+                            '<span>' + store.rdnWhlAddr + '</span><br>' +
+                            '<span class="jibun gray">' + store.siteWhlAddr + '</span><br>' +
+                            '<span class="tel">' + store.siteTel + '</span>' +
+                            '</div>');
+
+                        // <li> 요소를 <ul>에 추가
+                        placesList.append(listItem);
+                    }
+                    
+                    /******현모님 부분******/
+
+                    processUptaeInfo(response); // 받은 데이터 처리하는 함수 호출 및 마커찍기.
                     console.log("호출 성공")
                     if (response == null) {
                         console.log("값이 없어.")
@@ -159,9 +185,8 @@
     });
 
 
-
     /* cafe의 이름을 받아 DB에 저장된 해당 카페의 데이터 전체를 전송하는 부분 (DB에 저장된 모든 카페의 정보)*/
-    function processCafeInfo(data) {
+    function processUptaeInfo(data) {
         // Kakao 지도 API 초기화
         kakao.maps.load(function () {
 
@@ -194,16 +219,17 @@
                             console.log("마커 클릭했다");
 
                             $.ajax({
-                                url:"/cafeinfo",
-                                type:"GET",
+                                url: "/storeinfo",
+                                type: "GET",
                                 data: {
                                     bplcNm: bplcNm
                                 },
                                 success: function (response) {
                                     console.log("전송 성공");
-                                    // console.log(bplcNm);
+                                    console.log(response);
+                                    upateInfo(response);
                                 },
-                                error:function (xhr,status,error) {
+                                error: function (xhr, status, error) {
                                     console.log('전송 실패');
                                     console.log(error);
                                     console.log(status);
@@ -218,8 +244,8 @@
                         });
 
 
-
                     }
+
                     // 클릭 이벤트 리스너 추가
                     addClickListener(marker, bplcNm);
 
@@ -228,27 +254,35 @@
         });
     }
 
-    // 요청 확인용
-    $(document).ready(function() {
-        $("#submitBtn").click(function() {
-            // AJAX GET 요청
-            $.ajax({
-                url: "/cafeinfo",
-                type: "GET",
-                success: function(response) {
-                    console.log("서버에 전송 성공");
-                    console.log(response); // 받은 데이터 출력
-                    // 원하는 동작 수행
-                    var cafeName = response.cafeName; // cafeName 속성을 사용하여 원하는 정보 추출
-                    console.log(cafeName); // 추출한 정보 출력
-                },
-                error: function(xhr, status, error) {
-                    console.log("서버에 전송 실패");
-                    console.log(error);
-                }
-            });
-        });
-    });
+    // 가게 상세 정보창 업데이트 함수
+    function upateInfo(store) {
+        var storeinfo = document.getElementById("storeinfo");
+        storeinfo.innerHTML = ""; // 정보창 내용 초기화
+
+        // 정보창 내용 추가
+        var bplcNm = document.createElement("li");
+        bplcNm.innerHTML = "<span>상호명</span><span>" + store.bplcNm + "</span>";
+        storeinfo.appendChild(bplcNm);
+
+        var uptaeNm = document.createElement("li");
+        uptaeNm.innerHTML = "<span>업체구분</span><span>" + store.uptaeNm + "</span>";
+        storeinfo.appendChild(uptaeNm);
+
+        var rdnWhlAddr = document.createElement("li");
+        rdnWhlAddr.innerHTML = "<span>주소</span><span>" + store.rdnWhlAddr + "</span>";
+        storeinfo.appendChild(rdnWhlAddr);
+
+        var dtlStateNm = document.createElement("li");
+        dtlStateNm.innerHTML = "<span>영업상태</span><span>" + store.dtlStateNm + "</span>";
+        storeinfo.appendChild(dtlStateNm);
+
+        var siteTel = document.createElement("li");
+        if (siteTel !== null) {
+            siteTel.innerHTML = "<span>전화번호</span><span>" + store.siteTel + "</span>";
+        } else
+            siteTel.innerHTML = "<span>전화번호</span><span>등록된 전화번호 정보가 없습니다</span>";
+        storeinfo.appendChild(siteTel);
+    }
 
 
     /*현재 위치 찍는 부분*/

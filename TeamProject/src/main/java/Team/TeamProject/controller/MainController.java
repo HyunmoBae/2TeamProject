@@ -1,5 +1,6 @@
 package Team.TeamProject.controller;
 
+import Team.TeamProject.dto.StoreDto;
 import Team.TeamProject.entity.Store;
 import Team.TeamProject.service.StoreService;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MainController {
 
-    private final StoreService cafeService;
+    private final StoreService storeService;
 
     /**
      * 메인페이지
@@ -23,33 +24,30 @@ public class MainController {
         return "index";
     }
 
-
-    // 카페의 모든 정보 받는지 확인용도
+    //  현모
     @GetMapping("/test")
     @ResponseBody
-    public List<Store> test(Model model) {
+    public List<StoreDto> test(@RequestParam String uptae) {
+        List<StoreDto> uptaeInfo = storeService.uptaeSearch(uptae);
+//        System.err.println(uptaeInfo);
 
-        List<Store> cafeInfo = cafeService.CafeSearch();
-        // List 로 넘기고 List 로 원하는 정보만 받음 될듯
-//        System.err.println(cafeInfo);
-        model.addAttribute("cafeInfo",cafeInfo);
-//        System.err.println(cafeInfo.get(1).getBplcNm());
-
-        return cafeInfo;
+        return uptaeInfo;
     }
 
     // 마커 클릭했을 경우 해당 마커의 카페 정보 전송
-    @RequestMapping("/cafeinfo")
+    @RequestMapping("/storeinfo")
     @ResponseBody
     public Store sendCafeInfo(@RequestParam("bplcNm") String bplcNm,Model model) {
 
-        Store cafe = cafeService.sendCafeInfo(bplcNm);
+        Store store = storeService.sendStoreInfo(bplcNm);
         System.out.println(bplcNm+"의 정보 요청");
 
-        System.out.println("카페정보 ----- \n"+cafe);
-        model.addAttribute("cafe",cafe);
-        return cafe;
+        System.out.println("가게정보 ----- \n"+store);
+        model.addAttribute("store",store);
+        return store;
     }
+
+
 
 
 }
