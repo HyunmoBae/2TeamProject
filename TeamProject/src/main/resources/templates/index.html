@@ -59,7 +59,7 @@
             <div id="menu_wrap" class="bg_white">
                 <ul id="placesList"></ul>
             </div>
-        <div id="menu_wrap2" class="bg_white">
+        <div id="menu_wrap2" class="bg_white" style="display: none">
             <div class="option">
                 <div class="button-container">
                     <form id="storeinfo">
@@ -354,6 +354,8 @@
 
                     // 클릭 이벤트 리스너를 추가하는 함수 정의
                     function addClickListener(marker, bplcNm) {
+                        document.getElementById("menu_wrap2").style.display = "block";
+
                         kakao.maps.event.addListener(marker, 'click', function () {
                             var infowindow = new kakao.maps.InfoWindow({
                                 content: bplcNm, // 가게 이름을 인포윈도우 내용으로 설정합니다
@@ -362,8 +364,6 @@
                             });
 
                             infoWindows.push(infowindow);
-
-                            console.log("마커 클릭했다");
 
                             $.ajax({
                                 url: "/storeinfo",
@@ -384,8 +384,6 @@
                                 }
                             })
 
-                            console.log(marker.getPosition()); // 좌표 출력 --> 나옴
-                            console.log(bplcNm); // 이름 출력 --> 나옴
                             infowindow.open(map, marker);
 
                         });
@@ -417,15 +415,15 @@
                     // 클릭 이벤트 리스너를 추가하는 함수 정의
                     function addClickListener(marker, bplcNm) {
                         kakao.maps.event.addListener(marker, 'click', function () {
+
                             var infowindow = new kakao.maps.InfoWindow({
                                 content: bplcNm, // 가게 이름을 인포윈도우 내용으로 설정합니다
                                 removable: true // removeable 속성을 true로 설정하여 닫기 버튼을 표시합니다
 
                             });
 
+                            document.getElementById("menu_wrap2").style.display = "block";
                             infoWindows.push(infowindow);
-
-                            console.log("마커 클릭했다");
 
                             $.ajax({
                                 url: "/storeinfo",
@@ -446,8 +444,6 @@
                                 }
                             })
 
-                            console.log(marker.getPosition()); // 좌표 출력 --> 나옴
-                            console.log(bplcNm); // 이름 출력 --> 나옴
                             infowindow.open(map, marker);
 
                         });
