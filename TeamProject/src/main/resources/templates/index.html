@@ -56,10 +56,10 @@
     <div id="mapwrap">
         <!-- 지도가 표시될 div -->
         <div id="map" style="width:100%;height:600px;"></div>
-            <div id="menu_wrap" class="bg_white">
-                <ul id="placesList"></ul>
-            </div>
-        <div id="menu_wrap2" class="bg_white">
+        <div id="menu_wrap" class="bg_white" style="display: none">
+            <ul id="placesList"></ul>
+        </div>
+        <div id="menu_wrap2" class="bg_white" style="display: none">
             <div class="option">
                 <div class="button-container">
                     <form id="storeinfo">
@@ -74,6 +74,10 @@
                         <!--도로명 주소 사용-->
                         <li id="rdnWhlAddr">
                             <span>도로명주소:</span>
+                            <span></span>
+                        </li>
+                        <li id="siteWhlAddr">
+                            <span>지번주소:</span>
                             <span></span>
                         </li>
                         <li id="dtlStateNm">
@@ -125,6 +129,8 @@
                 url: url,
                 method: "GET",
                 success: function (response) {
+                    document.getElementById("menu_wrap").style.display = "block";
+
                     var storeList = response; // 받은 데이터를 JavaScript 변수에 할당
 
                     // 데이터를 표시할 <ul> 요소 선택
@@ -139,20 +145,21 @@
                             var store = storeList[i];
 
                             if (store.dtlStateNm == "영업"){
-                            var listItem = $("<li></li>");
+                                var listItem = $("<li></li>");
 
-                            // <li> 요소 내용 구성
-                            listItem.append('<span class="item"></span>');
-                            listItem.append('<div class="info">' +
-                                '<h5>' + store.bplcNm + '</h5>' +
-                                '<span>' + store.uptaeNm + '</span><br>' +
-                                '<span>' + store.rdnWhlAddr + '</span><br>' +
-                                '<span class="jibun gray">' + store.siteWhlAddr + '</span><br>' +
-                                '<span class="tel">' + store.siteTel + '</span>' +
-                                '</div>');
+                                // <li> 요소 내용 구성
+                                listItem.append('<span class="item"></span>');
+                                listItem.append('<div class="info">' +
+                                    '<h5>' + store.bplcNm + '</h5>' +
+                                    '<span>' + store.uptaeNm + '</span><br>' +
+                                    '<span>' + store.rdnWhlAddr + '</span><br>' +
+                                    '<span class="jibun gray">' + store.siteWhlAddr + '</span><br>' +
+                                    '<span class="tel">' + store.siteTel + '</span>' +
+                                    '<hr>'+
+                                    '</div>');
 
-                            // <li> 요소를 <ul>에 추가
-                            placesList.append(listItem);
+                                // <li> 요소를 <ul>에 추가
+                                placesList.append(listItem);
                             }
                         }
                     }else{
@@ -170,7 +177,7 @@
                                     '<span>' + store.rdnWhlAddr + '</span><br>' +
                                     '<span class="jibun gray">' + store.siteWhlAddr + '</span><br>' +
                                     '<span class="tel">' + store.siteTel + '</span>' +
-                                    '<br>'+
+                                    '<hr>'+
                                     '</div>');
 
                                 // <li> 요소를 <ul>에 추가
@@ -198,6 +205,7 @@
         // 폼 제출 이벤트 핸들러 등록
         $("#searchForm").submit(function (event){
             event.preventDefault(); // 기본 제출 동작 방지
+            document.getElementById("menu_wrap").style.display = "block";
 
             //검색어 가져오기
             var storeName = $("#searchInput").val();
@@ -333,7 +341,7 @@
     /* 해당 업태의 마커 찍기*/
     function processUptaeInfo(data) {
 
-            // 데이터 처리
+        // 데이터 처리
         if (state == 1) {
             for (var i = 0; i < data.length; i++) {
                 if (data[i].dtlStateNm == "영업") {
@@ -353,6 +361,8 @@
 
                     // 클릭 이벤트 리스너를 추가하는 함수 정의
                     function addClickListener(marker, bplcNm) {
+                        document.getElementById("menu_wrap2").style.display = "block";
+
                         kakao.maps.event.addListener(marker, 'click', function () {
                             var infowindow = new kakao.maps.InfoWindow({
                                 content: bplcNm, // 가게 이름을 인포윈도우 내용으로 설정합니다
@@ -361,8 +371,6 @@
                             });
 
                             infoWindows.push(infowindow);
-
-                            console.log("마커 클릭했다");
 
                             $.ajax({
                                 url: "/storeinfo",
@@ -383,8 +391,6 @@
                                 }
                             })
 
-                            console.log(marker.getPosition()); // 좌표 출력 --> 나옴
-                            console.log(bplcNm); // 이름 출력 --> 나옴
                             infowindow.open(map, marker);
 
                         });
@@ -416,15 +422,15 @@
                     // 클릭 이벤트 리스너를 추가하는 함수 정의
                     function addClickListener(marker, bplcNm) {
                         kakao.maps.event.addListener(marker, 'click', function () {
+
                             var infowindow = new kakao.maps.InfoWindow({
                                 content: bplcNm, // 가게 이름을 인포윈도우 내용으로 설정합니다
                                 removable: true // removeable 속성을 true로 설정하여 닫기 버튼을 표시합니다
 
                             });
 
+                            document.getElementById("menu_wrap2").style.display = "block";
                             infoWindows.push(infowindow);
-
-                            console.log("마커 클릭했다");
 
                             $.ajax({
                                 url: "/storeinfo",
@@ -445,8 +451,6 @@
                                 }
                             })
 
-                            console.log(marker.getPosition()); // 좌표 출력 --> 나옴
-                            console.log(bplcNm); // 이름 출력 --> 나옴
                             infowindow.open(map, marker);
 
                         });
@@ -509,8 +513,12 @@
         uptaeNm.innerHTML = "<span>업체구분:</span><span>" + store.uptaeNm + "</span>";
         storeinfo.appendChild(uptaeNm);
 
+        var siteWhlAddr = document.createElement("li");
+        siteWhlAddr.innerHTML = "<span>지번주소:</span><span>" + store.siteWhlAddr + "</span>";
+        storeinfo.appendChild(siteWhlAddr);
+
         var rdnWhlAddr = document.createElement("li");
-        rdnWhlAddr.innerHTML = "<span>주소:</span><span>" + store.rdnWhlAddr + "</span>";
+        rdnWhlAddr.innerHTML = "<span>도로명주소:</span><span>" + store.rdnWhlAddr + "</span>";
         storeinfo.appendChild(rdnWhlAddr);
 
         var dtlStateNm = document.createElement("li");
