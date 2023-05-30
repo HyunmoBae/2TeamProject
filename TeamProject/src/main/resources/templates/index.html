@@ -22,25 +22,30 @@
 <!-- search -->
 <nav class="navbar navbar-expand-lg">
     <div class="container px-4 px-lg-5">
-        <div class="collapse navbar-collapse" id="navbarSupportedContent"></div>
-        <!-- 지도 위에 표시될 마커 카테고리 -->
-        <div class="category-wrapper">
-                <button class="category-button" id="커피숍">카페</button>
-                <button class="category-button" id="한식">한식</button>
-                <button class="category-button" id="일식">일식</button>
-                <button class="category-button" id="중국식">중식</button>
-                <button class="category-button" id="통닭(치킨)">치킨</button>
-                <button class="category-button" id="pizza">피자</button>
-                <button class="category-button" id="분식">분식</button>
-                <button class="category-button" id="편의점">편의점</button>
-                <button class="category-button" id="location">현위치</button>
 
-        </div>
-
-        <form class="d-flex" role="search">
+        <!--검색폼-->
+        <form class="d-flex" role="search" id="searchForm">
             <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
             <button class="btn btn-outline-dark" type="submit">Search</button>
         </form>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent"></div>
+        <!-- 지도 위에 표시될 마커 카테고리 -->
+        <div class="category-wrapper">
+            <button class="category-button" id="커피숍">카페</button>
+            <button class="category-button" id="한식">한식</button>
+            <button class="category-button" id="일식">일식</button>
+            <button class="category-button" id="중국식">중식</button>
+            <button class="category-button" id="통닭(치킨)">치킨</button>
+            <button class="category-button" id="pizza">피자</button>
+            <button class="category-button" id="분식">분식</button>
+            <button class="category-button" id="편의점">편의점</button>
+            <button class="category-button" id="location">현위치</button>
+        </div>
+        <div class="toggle-switch">
+            <input type="checkbox" id="state" class="checkbox">
+            <label for="state" class="switch"></label>
+        </div>
     </div>
     </div>
 </nav>
@@ -52,14 +57,14 @@
         <div id="map" style="width:100%;height:350px;"></div>
         <!--가게 정보 (전체 리스트 출력)-->
         <div id="menu_wrap2" class="bg_white">
-            <div class="option">
-                <div>
-                    <form onsubmit="searchPlaces(); return false;">
-                        키워드 : <input type="text" value="검색어 입력" id="keyword" size="15">
-                        <button type="submit">검색하기</button>
-                    </form>
-                </div>
-            </div>
+            <!--            <div class="option">-->
+            <!--                <div>-->
+            <!--                    <form onsubmit="searchPlaces(); return false;">-->
+            <!--                        키워드 : <input type="text" value="검색어 입력" id="keyword" size="15">-->
+            <!--                        <button type="submit">검색하기</button>-->
+            <!--                    </form>-->
+            <!--                </div>-->
+            <!--            </div>-->
             <hr>
             <ul id="placesList"></ul>
             <div id="pagination"></div>
@@ -125,71 +130,100 @@
 
     // 모델 데이터 가져오기
     var storeList = /*[[${storeList}]]*/ {};
+    var markers = [],
+        infoWindows = [],
+        state = 0;
 
     /* 카페 마커 찍는 부분*/
     $(document).ready(function () {
-
-        // 테스트 버튼 클릭 이벤트 핸들러 등록
+        // 버튼 클릭 이벤트 핸들러 등록
         $(".category-button").click(function () {
             var buttonId = $(this).attr("id");
-            var url = "/test?uptae=" + buttonId;
+            var url = "/uptae?uptae=" + buttonId;
 
-            console.log(buttonId + " 정보 불러오기 버튼 클릭 했다.");
-            // Ajax GET 요청
+
+            console.log(buttonId + " 가게 정보 불러오기 버튼 클릭 했다.");
+
+            hideMarkers();
+            hideInfoWindows();
+
+            // Ajax GET 요청으로 해당업태의 정보 받아오고 왼쪽 list에 보여주기
             $.ajax({
                 url: url,
                 method: "GET",
                 success: function (response) {
-                    var storeList = response;
-                    console.log("버튼 누르고 전송");
-                    console.log(storeList);
-                    /******현모님 부분******/
+                    var storeList = response; // 받은 데이터를 JavaScript 변수에 할당
+
+                    // 데이터를 표시할 <ul> 요소 선택
                     var placesList = $("#placesList");
 
                     // 이전에 표시된 내용 제거
                     placesList.empty();
 
-                    // 받은 데이터를 반복하면서 <li> 요소 추가
-                    for (var i = 0; i < storeList.length; i++) {
+                    if (state == 1) {
+                        // 받은 데이터를 반복하면서 <li> 요소 추가
+                        for (var i = 0; i < storeList.length; i++) {
+                            var store = storeList[i];
+                            // console.log(store); --> 나옴
 
-                        var store = storeList[i];
-                        var listItem = $("<li></li>");
+                            if (store.dtlStateNm == "영업") {
 
-                        // <li> 요소 내용 구성
-                        listItem.append('<span class="item"></span>');
-                        listItem.append('<div class="info">' +
-                            '<h5>' + store.bplcNm + '</h5>' +
-                            '<span>' + store.uptaeNm + '</span><br>' +
-                            '<span>' + store.rdnWhlAddr + '</span><br>' +
-                            '<span class="jibun gray">' + store.siteWhlAddr + '</span><br>' +
-                            '<span class="tel">' + store.siteTel + '</span>' +
-                            '</div>');
+                                var listItem = $("<li></li>");
 
-                        // <li> 요소를 <ul>에 추가
-                        placesList.append(listItem);
+                                // <li> 요소 내용 구성
+                                listItem.append('<span class="item"></span>');
+                                listItem.append('<div class="info">' +
+                                    '<h5>' + store.bplcNm + '</h5>' +
+                                    '<span>' + store.uptaeNm + '</span><br>' +
+                                    '<span>' + store.rdnWhlAddr + '</span><br>' +
+                                    '<span class="jibun gray">' + store.siteWhlAddr + '</span><br>' +
+                                    '<span class="tel">' + store.siteTel + '</span>' +
+                                    '</div>');
+
+                                // <li> 요소를 <ul>에 추가
+                                placesList.append(listItem);
+                            }
+                        }
+                    } else {
+                        for (var i = 0; i < storeList.length; i++) {
+                            var store = storeList[i];
+
+                            if (store.dtlStateNm == "폐업") {
+                                var listItem = $("<li></li>");
+
+                                // <li> 요소 내용 구성
+                                listItem.append('<span class="item"></span>');
+                                listItem.append('<div class="info">' +
+                                    '<h5>' + store.bplcNm + '</h5>' +
+                                    '<span>' + store.uptaeNm + '</span><br>' +
+                                    '<span>' + store.rdnWhlAddr + '</span><br>' +
+                                    '<span class="jibun gray">' + store.siteWhlAddr + '</span><br>' +
+                                    '<span class="tel">' + store.siteTel + '</span>' +
+                                    '</div>');
+
+                                // <li> 요소를 <ul>에 추가
+                                placesList.append(listItem);
+                            }
+                        }
                     }
-                    
-                    /******현모님 부분******/
-
+                    hideMarkers();
+                    hideInfoWindows();
                     processUptaeInfo(response); // 받은 데이터 처리하는 함수 호출 및 마커찍기.
-                    console.log("호출 성공")
+
                     if (response == null) {
-                        console.log("값이 없어.")
+                        console.log("값 없음")
                     }
                 },
                 error: function (xhr, status, error) {
-                    console.log("요청 실패:");
+                    console.log("요청 실패:" + error);
                 }
             });
         });
     });
 
-
-    /* cafe의 이름을 받아 DB에 저장된 해당 카페의 데이터 전체를 전송하는 부분 (DB에 저장된 모든 카페의 정보)*/
     function processUptaeInfo(data) {
         // Kakao 지도 API 초기화
-        kakao.maps.load(function () {
-
+        if (state == 1) {
             // 데이터 처리
             for (var i = 0; i < data.length; i++) {
                 if (data[i].dtlStateNm == "영업") {
@@ -207,6 +241,7 @@
 
                     // 마커가 지도 위에 표시되도록 설정합니다
                     marker.setMap(map);
+                    markers.push(marker);
 
                     // 클릭 이벤트 리스너를 추가하는 함수 정의
                     function addClickListener(marker, bplcNm) {
@@ -216,6 +251,11 @@
                                 removable: true // removeable 속성을 true로 설정하여 닫기 버튼을 표시합니다
 
                             });
+                            infoWindows.push(infowindow);
+
+
+                            // 마커 클릭한 경우 , 해당 가게의 정보 전송
+
                             console.log("마커 클릭했다");
 
                             $.ajax({
@@ -245,14 +285,77 @@
 
 
                     }
+                }
 
-                    // 클릭 이벤트 리스너 추가
-                    addClickListener(marker, bplcNm);
+                // 클릭 이벤트 리스너 추가
+                addClickListener(marker, bplcNm);
+            }
+        }
+
+    else {
+        for (var i = 0; i < data.length; i++) {
+            if (data[i].dtlStateNm == "폐업") {
+                var bplcNm = data[i].bplcNm;
+
+                // 마커가 표시될 위치입니다
+                var markerPosition = new kakao.maps.LatLng(data[i].y, data[i].x);
+
+                // 마커를 생성합니다
+                var marker = new kakao.maps.Marker({
+                    position: markerPosition // 좌표값 저장되어있으니
+                });
+
+                // 마커가 지도 위에 표시되도록 설정합니다
+                marker.setMap(map);
+                markers.push(marker);
+
+                // 마커 클릭했을 경우, 인포윈도우 및 정보 전송
+                function addClickListener(marker, bplcNm) {
+                    kakao.maps.event.addListener(marker, 'click', function () {
+                        var infowindow = new kakao.maps.InfoWindow({
+                            content: bplcNm, // 가게 이름을 인포윈도우 내용으로 설정합니다
+                            removable: true // removeable 속성을 true로 설정하여 닫기 버튼을 표시합니다
+
+                        });
+
+                        console.log("마커 클릭했다");
+
+                        $.ajax({
+                            url: "/storeinfo",
+                            type: "GET",
+                            data: {
+                                bplcNm: bplcNm
+                            },
+                            success: function (response) {
+                                console.log("전송 성공");
+                                console.log(response);
+                                upateInfo(response);
+                            },
+                            error: function (xhr, status, error) {
+                                console.log('전송 실패');
+                                console.log(error);
+                                console.log(status);
+
+                            }
+                        })
+
+                        console.log(marker.getPosition()); // 좌표 출력 --> 나옴
+                        console.log(bplcNm); // 이름 출력 --> 나옴
+                        infowindow.open(map, marker);
+
+                    });
+
+
+                }
+
+                // 클릭 이벤트 리스너 추가
+                addClickListener(marker, bplcNm);
 
                 }
             }
-        });
+        }
     }
+
 
     // 가게 상세 정보창 업데이트 함수
     function upateInfo(store) {
@@ -261,30 +364,108 @@
 
         // 정보창 내용 추가
         var bplcNm = document.createElement("li");
-        bplcNm.innerHTML = "<span>상호명</span><span>" + store.bplcNm + "</span>";
+        bplcNm.innerHTML = "<span>상호명:</span><span>" + store.bplcNm + "</span>";
         storeinfo.appendChild(bplcNm);
 
         var uptaeNm = document.createElement("li");
-        uptaeNm.innerHTML = "<span>업체구분</span><span>" + store.uptaeNm + "</span>";
+        uptaeNm.innerHTML = "<span>업체구분:</span><span>" + store.uptaeNm + "</span>";
         storeinfo.appendChild(uptaeNm);
 
         var rdnWhlAddr = document.createElement("li");
-        rdnWhlAddr.innerHTML = "<span>주소</span><span>" + store.rdnWhlAddr + "</span>";
+        rdnWhlAddr.innerHTML = "<span>주소:</span><span>" + store.rdnWhlAddr + "</span>";
         storeinfo.appendChild(rdnWhlAddr);
 
         var dtlStateNm = document.createElement("li");
-        dtlStateNm.innerHTML = "<span>영업상태</span><span>" + store.dtlStateNm + "</span>";
+        dtlStateNm.innerHTML = "<span>영업상태:</span><span>" + store.dtlStateNm + "</span>";
         storeinfo.appendChild(dtlStateNm);
 
         var siteTel = document.createElement("li");
         if (siteTel !== null) {
-            siteTel.innerHTML = "<span>전화번호</span><span>" + store.siteTel + "</span>";
+            siteTel.innerHTML = "<span>전화번호:</span><span>" + store.siteTel + "</span>";
         } else
             siteTel.innerHTML = "<span>전화번호</span><span>등록된 전화번호 정보가 없습니다</span>";
         storeinfo.appendChild(siteTel);
     }
 
+    //검색 결과를 보여주는 함수
+    $(document).ready(function () {
+        // 폼 제출 이벤트 핸들러 등록
+        $("#searchForm").submit(function (event) {
+            event.preventDefault(); // 기본 제출 동작 방지
 
+            //검색어 가져오기
+            var storeName = $("#searchInput").val();
+
+            $.ajax({
+                url: "/search?storeName=" + storeName,
+                method: "GET",
+                success: function (response) {
+                    var storeList = response; // 받은 데이터를 JavaScript 변수에 할당
+
+                    // 데이터를 표시할 <ul> 요소 선택
+                    var placesList = $("#placesList");
+
+                    // 이전에 표시된 내용 제거
+                    placesList.empty();
+
+                    if (state == 1) {
+                        // 받은 데이터를 반복하면서 <li> 요소 추가
+                        for (var i = 0; i < storeList.length; i++) {
+                            var store = storeList[i];
+
+                            if (store.dtlStateNm == "영업") {
+                                var listItem = $("<li></li>");
+
+                                // <li> 요소 내용 구성
+                                listItem.append('<span class="item"></span>');
+                                listItem.append('<div class="info">' +
+                                    '<h5>' + store.bplcNm + '</h5>' +
+                                    '<span>' + store.uptaeNm + '</span><br>' +
+                                    '<span>' + store.rdnWhlAddr + '</span><br>' +
+                                    '<span class="jibun gray">' + store.siteWhlAddr + '</span><br>' +
+                                    '<span class="tel">' + store.siteTel + '</span>' +
+                                    '</div>');
+
+                                // <li> 요소를 <ul>에 추가
+                                placesList.append(listItem);
+                            }
+
+                        }
+                    } else {
+                        // 받은 데이터를 반복하면서 <li> 요소 추가
+                        for (var i = 0; i < storeList.length; i++) {
+                            var store = storeList[i];
+
+                            if (store.dtlStateNm == "폐업") {
+                                var listItem = $("<li></li>");
+
+                                // <li> 요소 내용 구성
+                                listItem.append('<span class="item"></span>');
+                                listItem.append('<div class="info">' +
+                                    '<h5>' + store.bplcNm + '</h5>' +
+                                    '<span>' + store.uptaeNm + '</span><br>' +
+                                    '<span>' + store.rdnWhlAddr + '</span><br>' +
+                                    '<span class="jibun gray">' + store.siteWhlAddr + '</span><br>' +
+                                    '<span class="tel">' + store.siteTel + '</span>' +
+                                    '</div>');
+
+                                // <li> 요소를 <ul>에 추가
+                                placesList.append(listItem);
+                            }
+
+                        }
+                    }
+                    hideMarkers();
+                    hideInfoWindows();
+                    processUptaeInfo(response); // 받은 데이터 처리하는 함수 호출 및 마커찍기.
+                    // moveToLocation(storeList[0].y, storeList[0].x);
+                },
+                error: function (xhr, status, error) {
+                    console.log("요청실패" + error);
+                }
+            })
+        })
+    })
     /*현재 위치 찍는 부분*/
     $(document).ready(function () {
         $("#location").click(function () {
@@ -341,6 +522,42 @@
             }
         })
     })
+
+    // 토글 상태 변경에 따른 동작을 추가
+    const toggle = document.getElementById('state');
+    toggle.addEventListener('change', function () {
+        // 스위치의 상태 변경에 따른 동작을 추가할 수 있습니다.
+        if (this.checked) {
+            // 스위치가 켜진 경우에 대한 동작
+            state = 1;
+        } else {
+            // 스위치가 꺼진 경우에 대한 동작
+            state = 0;
+        }
+    });
+
+    //마커를 닫는 함수
+    function hideMarkers() {
+        for (var i = 0; i < markers.length; i++) {
+            markers[i].setMap(null);
+        }
+        markers = [];
+    }
+
+    //인포윈도우 닫는 함수
+    function hideInfoWindows() {
+        for (var i = 0; i < infoWindows.length; i++) {
+            infoWindows[i].close();
+        }
+        infoWindows = [];
+    }
+
+    // 특정 좌표로 이동하는 함수
+    function moveToLocation(y, x) {
+        var moveLatLon = new kakao.maps.LatLng(y, x);
+        // 지도 중심을 이동합니다
+        map.setCenter(moveLatLon);
+    }
 </script>
 </body>
 </html>

@@ -25,7 +25,7 @@ public class MainController {
     }
 
     //  현모
-    @GetMapping("/test")
+    @GetMapping("/uptae")
     @ResponseBody
     public List<StoreDto> test(@RequestParam String uptae) {
         List<StoreDto> uptaeInfo = storeService.uptaeSearch(uptae);
@@ -45,6 +45,15 @@ public class MainController {
         System.out.println("가게정보 ----- \n"+store);
         model.addAttribute("store",store);
         return store;
+    }
+
+    //가게 검색
+    @GetMapping("/search")
+    @ResponseBody
+    public List<StoreDto> searchStore(@RequestParam String storeName){
+        List<StoreDto> storeInfo = storeService.searchStore(storeName);
+
+        return storeInfo;
     }
 
 

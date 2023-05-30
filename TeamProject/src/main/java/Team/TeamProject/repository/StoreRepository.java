@@ -14,4 +14,6 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
 
     // DB 중 uptaeNm = "커피숍" 인 데이터 찾기 (카페 전체 정보)
     List<Store> findAllByuptaeNm(String uptaeNm);
+
+    List<Store> findBybplcNmContaining(String storeName);
 }

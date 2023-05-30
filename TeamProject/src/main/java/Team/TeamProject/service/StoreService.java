@@ -30,7 +30,7 @@ public class StoreService {
 
     }
 
-    // 카테고리에 맞는 가게 검색 ( 현모님 )
+    // 카테고리에 맞는 가게 검색
     @Transactional
     public List<StoreDto> uptaeSearch(String uptae) {
 
@@ -47,5 +47,18 @@ public class StoreService {
     // 마커 클릭했을 경우 해당 카페의 정보만 전송
     public Store sendStoreInfo(String bplcNm) {
         return storeRepository.findBybplcNm(bplcNm);
+    }
+
+    //해당
+    @Transactional
+    public List<StoreDto> searchStore(String storeName) {
+
+        var storeInfo = storeRepository.findBybplcNmContaining(storeName);
+        List<StoreDto> storeList = new ArrayList<>();
+        for (Store store:storeInfo){
+            StoreDto dto = new StoreDto().StoreEntityToDto(store);
+            storeList.add(dto);
+        }
+        return storeList;
     }
 }
