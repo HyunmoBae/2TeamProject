@@ -20,7 +20,7 @@
 <div th:replace="/fragments/header.html :: fragment-header"></div>
 <!-- search -->
 <nav class="navbar navbar-expand-lg">
-    <div class="container px-4 px-lg-5">
+    <div class="container px-4 px-lg-5" style="margin-left: -30px;">
         <!-- 검색 폼 -->
         <form class="d-flex" role="search" id="searchForm">
             <input class="form-control me-2" type="search" placeholder="가게 이름을 입력하세요" aria-label="Search" id="searchInput">
@@ -33,7 +33,6 @@
         <div class="category-wrapper ms-auto">
             <button class="category-button" id="커피숍">카페</button>
             <button class="category-button" id="통닭(치킨)">치킨</button>
-            <button class="category-button" id="pizza">피자</button>
             <button class="category-button" id="일식">일식집</button>
             <button class="category-button" id="중국식">중국집</button>
             <button class="category-button" id="한식">한식집</button>
@@ -41,10 +40,13 @@
             <button class="category-button" id="편의점">편의점</button>
             <button class="category-button" id="location"> 내 위치 </button>
         </div>
+
+        &nbsp;&nbsp;&nbsp;폐업&nbsp;
         <div class="toggle-switch">
             <input type="checkbox" id="state" class="checkbox">
             <label for="state" class="switch"></label>
         </div>
+        &nbsp;영업
     </div>
 </nav>
 
@@ -55,15 +57,6 @@
         <!-- 지도가 표시될 div -->
         <div id="map" style="width:100%;height:600px;"></div>
             <div id="menu_wrap" class="bg_white">
-<!--                <div class="option">-->
-<!--                    <div>-->
-<!--                        <form onsubmit="searchPlaces(); return false;">-->
-<!--                            키워드 : <input type="text" value="이태원 맛집" id="keyword" size="15">-->
-<!--                            <button type="submit">검색하기</button>-->
-<!--                        </form>-->
-<!--                    </div>-->
-<!--                </div>-->
-                <hr>
                 <ul id="placesList"></ul>
                 <div id="pagination"></div>
             </div>
@@ -114,9 +107,8 @@
                         // 받은 데이터를 반복하면서 <li> 요소 추가
                         for (var i = 0; i < storeList.length; i++) {
                             var store = storeList[i];
-                            console.log(store);
+
                             if (store.dtlStateNm == "영업"){
-                                console.log("aa");
                             var listItem = $("<li></li>");
 
                             // <li> 요소 내용 구성
@@ -148,6 +140,7 @@
                                     '<span>' + store.rdnWhlAddr + '</span><br>' +
                                     '<span class="jibun gray">' + store.siteWhlAddr + '</span><br>' +
                                     '<span class="tel">' + store.siteTel + '</span>' +
+                                    '<br>'+
                                     '</div>');
 
                                 // <li> 요소를 <ul>에 추가
@@ -416,6 +409,7 @@
             state = 0;
         }
     });
+
 
 </script>
 </body>
