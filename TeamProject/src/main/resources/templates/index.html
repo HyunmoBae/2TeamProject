@@ -42,11 +42,13 @@
             <button class="category-button" id="편의점">편의점</button>
             <button class="category-button" id="location">현위치</button>
         </div>
+
+        &nbsp;&nbsp;&nbsp;폐업&nbsp;
         <div class="toggle-switch">
             <input type="checkbox" id="state" class="checkbox">
             <label for="state" class="switch"></label>
         </div>
-    </div>
+        &nbsp;영업
     </div>
 </nav>
 <!-- Section-->
@@ -54,7 +56,7 @@
 <section class="py-4">
 
     <div class="map_wrap">
-        <div id="map" style="width:100%;height:350px;"></div>
+        <div id="map" style="width:100%;height:600px;"></div>
         <!--가게 정보 (전체 리스트 출력)-->
         <div id="menu_wrap2" class="bg_white">
             <!--            <div class="option">-->
@@ -75,7 +77,6 @@
         <div id="menu_wrap" class="bg_white">
             <div class="option">
                 <hr/>
-                <button type="submit" class="previous-button">이전으로</button>
                 <div class="button-container">
                     <form id="storeinfo">
                         <li id="bplcNm">
@@ -317,6 +318,8 @@
                             removable: true // removeable 속성을 true로 설정하여 닫기 버튼을 표시합니다
 
                         });
+
+                        infoWindows.push(infowindow);
 
                         console.log("마커 클릭했다");
 
