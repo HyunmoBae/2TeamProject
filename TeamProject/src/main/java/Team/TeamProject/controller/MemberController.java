@@ -1,5 +1,6 @@
 package Team.TeamProject.controller;
 
+import Team.TeamProject.constant.Role;
 import Team.TeamProject.dto.MemberDto;
 import Team.TeamProject.entity.Member;
 import Team.TeamProject.repository.MemberRepository;
@@ -10,6 +11,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Controller;
@@ -65,15 +67,6 @@ public class MemberController {
         }
     }
 
-    /**
-     *  로그인 확인
-     */
-    @GetMapping("/username")
-    @ResponseBody
-    public String currentUserName(Principal principal) {
-        log.info("username: {}", principal);
-        return principal.getName();
-    }
 
     /**
      * 로그인 에러 알림
@@ -117,5 +110,45 @@ public class MemberController {
             response.put("message", "사용 가능한 닉네임입니다.");
         }
         return ResponseEntity.ok(response);
+    }
+
+    /**
+     * 로그인 체크
+     */
+    @GetMapping("/check-login")
+    public ResponseEntity<?> checkLogin() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            // 사용자가 로그인한 상태
+            return ResponseEntity.ok(true);
+        } else {
+            // 사용자가 로그인하지 않은 상태
+            return ResponseEntity.ok(false);
+        }
+    }
+
+    /**
+     *  로그인 아이디 받아오기
+     */
+    @GetMapping("/username")
+    public ResponseEntity<?> currentUserName(Principal principal) {
+        if(principal != null) {
+            return ResponseEntity.ok(principal.getName());
+        } else {
+            return ResponseEntity.ok(null);
+        }
+    }
+
+    /**
+     * 로그인 권한 받아오기
+     */
+    @GetMapping("/userRole")
+    public ResponseEntity<?> currentUserRole(Principal principal) {
+        if(principal != null) {
+            Role role = memberService.getMemberRole(principal.getName());
+            return ResponseEntity.ok(role);
+        } else {
+            return ResponseEntity.ok("USER");
+        }
     }
 }

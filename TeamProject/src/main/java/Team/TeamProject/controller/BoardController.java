@@ -2,6 +2,7 @@ package Team.TeamProject.controller;
 
 import Team.TeamProject.constant.Role;
 import Team.TeamProject.dto.BoardDto;
+import Team.TeamProject.dto.ReviewDto;
 import Team.TeamProject.service.BoardService;
 import Team.TeamProject.service.ImageService;
 import Team.TeamProject.service.MemberService;
@@ -111,8 +112,6 @@ public class BoardController {
         BoardDto boardDto = boardService.getBoardDetail(board_idx);
         String id = principal.getName();
         String boardId = boardDto.getMemberDto().getId();
-        log.info("boardDto: {}", boardDto);
-        log.info("imageDto: {}", boardDto.getImageDtos().size());
         if(id.equals(boardId)){
             model.addAttribute("board", boardDto);
             return "board/modify";
@@ -240,10 +239,54 @@ public class BoardController {
      * 댓글 저장
      */
     @PostMapping("/review")
-    public void saveReview(@RequestParam String review, @RequestParam Long board_idx, Principal principal) {
-        log.info("review: {}", review);
-        log.info("board_idx: {}", board_idx);
-        String id = principal.getName();
-        reviewService.saveReview(review, board_idx,id);
+    public ResponseEntity<?> saveReview(@RequestParam String review, @RequestParam Long board_idx, Principal principal) {
+        try {
+            String id = principal.getName();
+            reviewService.saveReview(review, board_idx,id);
+            return ResponseEntity.ok("댓글이 저장되었습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    /**
+     * 댓글 보여주기
+     */
+    @GetMapping("/review/view")
+    public ResponseEntity<?> reviewView(@RequestParam Long board_idx){
+        try {
+            List<ReviewDto> reviewDtos = reviewService.reviewView(board_idx);
+            return ResponseEntity.ok(reviewDtos);
+        } catch(Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    /**
+     * 댓글 수정 하기
+     */
+    @PostMapping("/review/update")
+    public ResponseEntity<?> updateReview(@RequestParam Long review_idx, @RequestParam String updateContents, Principal principal) {
+        try {
+            String id = principal.getName();
+            reviewService.updateReview(review_idx, updateContents, id);
+            return ResponseEntity.ok("댓글 수정이 완료되었습니다.");
+        } catch(Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    /**
+     * 댓글 삭제 하기
+     */
+    @PostMapping("/review/delete")
+    public ResponseEntity<?> deleteReview(@RequestParam Long review_idx, Principal principal) {
+        try {
+            String id = principal.getName();
+            reviewService.deleteReview(review_idx, id);
+            return ResponseEntity.ok("댓글 삭제가 완료되었습니다.");
+        } catch(Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

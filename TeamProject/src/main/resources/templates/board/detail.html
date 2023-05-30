@@ -40,7 +40,7 @@
             th:onclick="|location.href='/board/modify?board_idx=${board.board_idx}'|">
             수정
         </button>
-        <button type="button" class="btn btn-danger btn" id="btndelete" th:if="${#authentication.name == board.memberDto.id}">
+        <button type="button" class="btn btn-danger btn" id="btndelete" th:if="${#strings.contains(#authentication.name, board.memberDto.id) or #authorization.expression('hasRole(''ROLE_ADMIN'')')}">
             삭제
         </button>
     </div>
@@ -66,7 +66,7 @@
         <tbody>
             <tr>
                 <th scope="row" id="board_idx" th:text="${board.board_idx}"></th>
-                <td th:text="${board.memberDto.nick}"></td>
+                <td id="nick" th:text="${board.memberDto.nick}"></td>
                 <td th:text="${board.category}"></td>
                 <th th:if="${board.boardType.name() == 'NOTICE'}" th:text="${board.title}"></th>
                 <td th:unless="${board.boardType.name() == 'NOTICE'}" th:text="${board.title}"></td>

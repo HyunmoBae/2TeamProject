@@ -1,11 +1,13 @@
 package Team.TeamProject.service;
 
 import Team.TeamProject.constant.BoardType;
+import Team.TeamProject.constant.Role;
 import Team.TeamProject.dto.BoardDto;
 import Team.TeamProject.dto.ImageDto;
 import Team.TeamProject.entity.Board;
 import Team.TeamProject.entity.Image;
 import Team.TeamProject.entity.Member;
+import Team.TeamProject.entity.Review;
 import Team.TeamProject.repository.BoardRepository;
 import Team.TeamProject.repository.ImageRepository;
 import Team.TeamProject.repository.MemberRepository;
@@ -18,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -30,6 +31,7 @@ public class BoardService {
     private final MemberRepository memberRepository;
     private final ImageRepository imageRepository;
     private final ImageService imageService;
+    private final ReviewService reviewService;
 
     /**
      * 게시글 저장
@@ -237,19 +239,19 @@ public class BoardService {
         // 글 작성자와 현재 사용자의 ID를 비교하여 권한 검사를 수행
         Member member = optionalMember.get();
         Board board = optionalBoard.get();
-        if (!member.getId().equals(board.getMember().getId())) {
+        if (member.getId().equals(board.getMember().getId()) || member.getRole().equals(Role.ADMIN)) {
+            List<Image> imageList = board.getImages();
+            if(imageList != null && !imageList.isEmpty()){
+                for(Image image : imageList) {
+                    imageService.deleteFile(image.getImgName());
+                }
+                board.getImages().clear();
+            }
+
+            // 글 삭제
+            boardRepository.delete(board);
+        } else {
             throw new IllegalArgumentException("권한이 없습니다.");
         }
-
-        List<Image> imageList = board.getImages();
-        if(imageList != null && !imageList.isEmpty()){
-            for(Image image : imageList) {
-                imageService.deleteFile(image.getImgName());
-            }
-            board.getImages().clear();
-        }
-
-        // 글 삭제
-        boardRepository.delete(board);
     }
 }

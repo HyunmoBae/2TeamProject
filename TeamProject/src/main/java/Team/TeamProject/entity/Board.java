@@ -39,8 +39,8 @@ public class Board extends BaseEntity {
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> images = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<Review> reviews = new ArrayList<>();
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Review> reviews = new ArrayList<>();
 
     public static Board toBoard(BoardDto boardDto, Member member){
         Board board = new Board();
@@ -59,13 +59,13 @@ public class Board extends BaseEntity {
         }
         board.setImages(images);
 
-//        List<Review> reviews = new ArrayList<>();
-//        if (boardDto.getReviewDtos() != null) {
-//            for(ReviewDto reviewDto : boardDto.getReviewDtos()) {
-//                reviews.add(Review.toReview(reviewDto, member, board));
-//            }
-//        }
-//        board.setReviews(reviews);
+        List<Review> reviews = new ArrayList<>();
+        if (boardDto.getReviewDtos() != null) {
+            for(ReviewDto reviewDto : boardDto.getReviewDtos()) {
+                reviews.add(Review.toReview(reviewDto, member, board));
+            }
+        }
+        board.setReviews(reviews);
 
         return board;
     }

@@ -18,7 +18,7 @@ public class ReviewDto {
         reviewDto.setReview_idx(review.getReview_idx());
         reviewDto.setContents(review.getContents());
         reviewDto.setMemberDto(MemberDto.toMemberDto(review.getMember()));
-        reviewDto.setReview_idx(review.getReview_idx());
+        reviewDto.setBoard_idx(review.getBoard().getBoard_idx());
         reviewDto.setRegTime(review.getRegTime());
         return reviewDto;
     }

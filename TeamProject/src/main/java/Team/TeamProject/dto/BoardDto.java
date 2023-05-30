@@ -23,7 +23,7 @@ public class BoardDto {
     private MemberDto memberDto;
 
     private List<ImageDto> imageDtos;
-//    private List<ReviewDto> reviewDtos;
+    private List<ReviewDto> reviewDtos;
 
     public static BoardDto toBoardDto(Board board) {
         BoardDto boardDto = new BoardDto();
@@ -44,13 +44,13 @@ public class BoardDto {
         }
         boardDto.setImageDtos(imageDtos);
 
-//        List<ReviewDto> reviewDtos = new ArrayList<>();
-//        if(board.getReviews() != null) {
-//            for (Review review : board.getReviews()) {
-//                reviewDtos.add(ReviewDto.toReviewDto(review));
-//            }
-//        }
-//        boardDto.setReviewDtos(reviewDtos);
+        List<ReviewDto> reviewDtos = new ArrayList<>();
+        if(board.getReviews() != null) {
+            for (Review review : board.getReviews()) {
+                reviewDtos.add(ReviewDto.toReviewDto(review));
+            }
+        }
+        boardDto.setReviewDtos(reviewDtos);
 
         return boardDto;
     }

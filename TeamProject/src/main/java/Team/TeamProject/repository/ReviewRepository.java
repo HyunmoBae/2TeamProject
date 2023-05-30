@@ -1,6 +1,9 @@
 package Team.TeamProject.repository;
 
+import Team.TeamProject.entity.Board;
 import Team.TeamProject.entity.Review;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -8,5 +11,7 @@ import java.util.List;
 
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
-    List<Review> findByBoard(Long board_idx);
+    List<Review> findByBoard(Board board);
+    Page<Review> findByMemberId(Pageable pageable, String id);
+    Page<Review> findByMemberIdAndContentsContaining(Pageable pageable, String id, String contents);
 }

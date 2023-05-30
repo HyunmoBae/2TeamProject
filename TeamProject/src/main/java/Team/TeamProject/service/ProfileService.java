@@ -2,11 +2,11 @@ package Team.TeamProject.service;
 
 import Team.TeamProject.constant.BoardType;
 import Team.TeamProject.dto.BoardDto;
+import Team.TeamProject.dto.ReviewDto;
 import Team.TeamProject.entity.Board;
-import Team.TeamProject.entity.Image;
-import Team.TeamProject.entity.Member;
+import Team.TeamProject.entity.Review;
 import Team.TeamProject.repository.BoardRepository;
-import Team.TeamProject.repository.MemberRepository;
+import Team.TeamProject.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
+
 
 @Slf4j
 @Service
@@ -26,6 +26,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProfileService {
     private final BoardRepository boardRepository;
+    private final ReviewRepository reviewRepository;
 
     /**
      * 내가 쓴 글 보기
@@ -69,5 +70,19 @@ public class ProfileService {
         Page<Board> sortedBoardPage = new PageImpl<>(noticeBoards.subList(start, end), pageable, noticeBoards.size());
 
         return sortedBoardPage.map(BoardDto::toBoardDto);
+    }
+
+    /**
+     * 내가 쓴 댓글 보기
+     */
+    public Page<ReviewDto> getMyReviewPage(Pageable pageable, String search, String id) {
+        Page<Review> reviews;
+        if(search.isBlank()) {
+            reviews = reviewRepository.findByMemberId(pageable, id);
+        } else {
+            reviews = reviewRepository.findByMemberIdAndContentsContaining(pageable, id, search);
+        }
+
+        return reviews.map(ReviewDto::toReviewDto);
     }
 }
