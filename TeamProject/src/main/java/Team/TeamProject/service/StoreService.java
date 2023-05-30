@@ -29,9 +29,9 @@ public class StoreService {
         return storeDtoList;
     }
 
-    // 카테고리에 맞는 가게 검색
+    // 업태에 맞는 가게 검색
     @Transactional
-    public List<StoreDto> uptaeSearch(String uptae) {
+    public List<StoreDto> searchUptae(String uptae) {
 
         var uptaeInfo = storeRepository.findAllByuptaeNm(uptae);
         List<StoreDto> uptaeList = new ArrayList<>();
@@ -40,5 +40,18 @@ public class StoreService {
             uptaeList.add(dto);
         }
         return uptaeList;
+    }
+
+    //해당
+    @Transactional
+    public List<StoreDto> searchStore(String storeName) {
+
+        var storeInfo = storeRepository.findBybplcNmContaining(storeName);
+        List<StoreDto> storeList = new ArrayList<>();
+        for (Store store:storeInfo){
+            StoreDto dto = new StoreDto().StoreEntityToDto(store);
+            storeList.add(dto);
+        }
+        return storeList;
     }
 }
