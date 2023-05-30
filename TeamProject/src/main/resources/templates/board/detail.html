@@ -78,6 +78,22 @@
             </tr>
         </tbody>
     </table>
+    <div class="card">
+        <div class="card-body d-flex">
+            <div class="col-10"><textarea class="form-control"></textarea></div>
+            <div class="col-2"><button type="button" class="btn btn-primary btn-lg" id="btnList" onclick="location.href='/board/list'">댓글 작성</button></div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">댓글 리스트</div>
+        <div class="card-body">
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <div>게시글 1</div>
+                </li>
+            </ul>
+        </div>
+    </div>
   </section>
   <!-- Footer-->
   <div th:replace="/fragments/footer.html :: fragment-footer"></div>

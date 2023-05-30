@@ -1,6 +1,7 @@
 package Team.TeamProject.controller;
 
 import Team.TeamProject.dto.BoardDto;
+import Team.TeamProject.service.BoardService;
 import Team.TeamProject.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProfileController {
     private final ProfileService profileService;
+    private final BoardService boardService;
     /**
      * 내 글 보기 페이지
      */
@@ -28,6 +30,9 @@ public class ProfileController {
         return "profile/my-writing";
     }
 
+    /**
+     * 내 글 목록 보여주기
+     */
     @GetMapping("/my-writing/update")
     @ResponseBody
     public ResponseEntity<?> getUpdatedBoardList(@PageableDefault(size = 10) Pageable pageable,
@@ -41,13 +46,32 @@ public class ProfileController {
         }
     }
 
-    @PostMapping("/my-writing/delete")
-    public String deleteMyWriting(@RequestBody List<Long> checkedValues) {
-        log.info("checkedValues: {}", checkedValues);
-        for (Long board_idx : checkedValues) {
-            log.info("board_idx: {}", board_idx);
+    /**
+     * 내 글 목록 삭제
+     */
+    @GetMapping("/delete")
+    public ResponseEntity<?> deleteMyWriting(@RequestParam Long board_idx, Principal principal) {
+        try {
+            boardService.deleteBoard(board_idx, principal.getName());
+            return ResponseEntity.ok("글 삭제가 완료되었습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-        return "profile/my-writing";
     }
 
+    /**
+     * 관심 목록 페이지
+     */
+    @GetMapping("/interest")
+    public String interestView() {
+        return "profile/interest";
+    }
+
+    /**
+     * 회원 관리 페이지
+     */
+    @GetMapping("/member")
+    public String memberView() {
+        return "profile/member";
+    }
 }

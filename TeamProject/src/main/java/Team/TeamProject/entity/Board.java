@@ -3,6 +3,7 @@ package Team.TeamProject.entity;
 import Team.TeamProject.constant.BoardType;
 import Team.TeamProject.dto.BoardDto;
 import Team.TeamProject.dto.ImageDto;
+import Team.TeamProject.dto.ReviewDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -38,6 +39,9 @@ public class Board extends BaseEntity {
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> images = new ArrayList<>();
 
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Review> reviews = new ArrayList<>();
+
     public static Board toBoard(BoardDto boardDto, Member member){
         Board board = new Board();
         board.setTitle(boardDto.getTitle());
@@ -54,6 +58,15 @@ public class Board extends BaseEntity {
             }
         }
         board.setImages(images);
+
+        List<Review> reviews = new ArrayList<>();
+        if (boardDto.getReviewDtos() != null) {
+            for(ReviewDto reviewDto : boardDto.getReviewDtos()) {
+                reviews.add(Review.toReview(reviewDto, member, board));
+            }
+        }
+        board.setReviews(reviews);
+
         return board;
     }
 }

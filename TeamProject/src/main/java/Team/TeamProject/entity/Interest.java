@@ -22,6 +22,8 @@ public class Interest extends BaseEntity {
     private boolean status;  // true = 관심, false = 관심x
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_idx")
     private Member member;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Store store;
 }

@@ -45,34 +45,38 @@ $(document).ready(function () {
 
     $(document).on("click", "#deleteBtn", function() {
         var confirmDelete = confirm("정말 삭제하시겠습니까?");
-        if(confirmDelete) {
-            var checkedValues = getCheckedValues();
-            console.log(checkedValues);
-            if(checkedValues != null && checkedValues.length != 0){
-                console.log(checkedValues);
-                $.ajax({
-                    url:"/profile/my-writing/delete",
-                    type: "POST",
-                    dataType: "json",
-                    contentType: "application/json", // JSON 형식으로 데이터 전송
-                    data: JSON.stringify(checkedValues), // JSON 데이터로 변환하여 전송
-                    success: function (response) {
-                        // 삭제 성공 시 처리하는 로직
-                        console.log('삭제되었습니다.');
-                        console.log(response);
-                        // 추가적인 처리 로직을 구현하거나 페이지를 새로고침할 수 있습니다.
-                    },
-                    error: function (xhr) {
-                        // 요청이 실패했을 때 처리하는 로직
-                        console.error(xhr.responseText);
-                    }
-                });
-            } else{
-                console.log('삭제할 글을 선택해주세요.');
+        if (confirmDelete) {
+          var checkedValues = getCheckedValues();
+          if (checkedValues != null && checkedValues.length != 0) {
+            console.log("checkedValues: ",checkedValues);
+            var deleteCount = 0;
+            var totalDeleteCount = checkedValues.length;
+      
+            for (var i = 0; i < checkedValues.length; i++) {
+              var board_idx = checkedValues[i];
+      
+              $.ajax({
+                url: "/profile/delete",
+                type: "GET",
+                data: { board_idx: board_idx },
+                success: function(response) {
+                  deleteCount++;
+      
+                  if (deleteCount === totalDeleteCount) {
+                    alert(response);
+                    window.location.href = '/profile/my-writing';
+                  }
+                },
+                error: function(xhr) {
+                  console.error(xhr.responseText);
+                },
+              });
             }
+          } else {
+            console.log('삭제할 글을 선택해주세요.');
+          }
         }
-    });
-
+      });
 });
 
 function loadArticles(page, categoryId, search) {

@@ -22,7 +22,7 @@ public class Image extends BaseEntity {
     private String imgName; // 이미지 원본 이름
     private String imgPath; // 이미지 파일 경로
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_idx")
     private Board board;
 

@@ -3,6 +3,7 @@ package Team.TeamProject.dto;
 import Team.TeamProject.constant.BoardType;
 import Team.TeamProject.entity.Board;
 import Team.TeamProject.entity.Image;
+import Team.TeamProject.entity.Review;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -22,6 +23,7 @@ public class BoardDto {
     private MemberDto memberDto;
 
     private List<ImageDto> imageDtos;
+    private List<ReviewDto> reviewDtos;
 
     public static BoardDto toBoardDto(Board board) {
         BoardDto boardDto = new BoardDto();
@@ -41,6 +43,14 @@ public class BoardDto {
             }
         }
         boardDto.setImageDtos(imageDtos);
+
+        List<ReviewDto> reviewDtos = new ArrayList<>();
+        if(board.getReviews() != null) {
+            for (Review review : board.getReviews()) {
+                reviewDtos.add(ReviewDto.toReviewDto(review));
+            }
+        }
+        boardDto.setReviewDtos(reviewDtos);
 
         return boardDto;
     }
