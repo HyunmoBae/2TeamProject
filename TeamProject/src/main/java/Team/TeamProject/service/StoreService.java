@@ -54,4 +54,11 @@ public class StoreService {
         }
         return storeList;
     }
+
+    public StoreDto sendStoreInfo(String bplcNm) {
+        var store = storeRepository.findBybplcNm(bplcNm);
+        StoreDto dto = new StoreDto().StoreEntityToDto(store);
+
+        return dto;
+    }
 }

@@ -58,9 +58,39 @@
         <div id="map" style="width:100%;height:600px;"></div>
             <div id="menu_wrap" class="bg_white">
                 <ul id="placesList"></ul>
-                <div id="pagination"></div>
             </div>
+        <div id="menu_wrap2" class="bg_white">
+            <div class="option">
+                <div class="button-container">
+                    <form id="storeinfo">
+                        <li id="bplcNm">
+                            <span>상호명:</span>
+                            <span></span>
+                        </li>
+                        <li id="uptaeNm">
+                            <span>업체구분:</span>
+                            <span></span>
+                        </li>
+                        <!--도로명 주소 사용-->
+                        <li id="rdnWhlAddr">
+                            <span>도로명주소:</span>
+                            <span></span>
+                        </li>
+                        <li id="dtlStateNm">
+                            <span>영업상태:</span>
+                            <span></span>
+                        </li>
+                        <li id="siteTel">
+                            <span>전화번호:</span>
+                            <span></span>
+                        </li>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
+
+
 
 </section>
 <!-- Footer-->
@@ -327,10 +357,38 @@
                             var infowindow = new kakao.maps.InfoWindow({
                                 content: bplcNm, // 가게 이름을 인포윈도우 내용으로 설정합니다
                                 removable: true // removeable 속성을 true로 설정하여 닫기 버튼을 표시합니다
+
                             });
-                            infowindow.open(map, marker);
+
                             infoWindows.push(infowindow);
+
+                            console.log("마커 클릭했다");
+
+                            $.ajax({
+                                url: "/storeinfo",
+                                type: "GET",
+                                data: {
+                                    bplcNm: bplcNm
+                                },
+                                success: function (response) {
+                                    console.log("전송 성공");
+                                    console.log(response);
+                                    upateInfo(response);
+                                },
+                                error: function (xhr, status, error) {
+                                    console.log('전송 실패');
+                                    console.log(error);
+                                    console.log(status);
+
+                                }
+                            })
+
+                            console.log(marker.getPosition()); // 좌표 출력 --> 나옴
+                            console.log(bplcNm); // 이름 출력 --> 나옴
+                            infowindow.open(map, marker);
+
                         });
+
 
                     }
 
@@ -361,10 +419,38 @@
                             var infowindow = new kakao.maps.InfoWindow({
                                 content: bplcNm, // 가게 이름을 인포윈도우 내용으로 설정합니다
                                 removable: true // removeable 속성을 true로 설정하여 닫기 버튼을 표시합니다
+
                             });
-                            infowindow.open(map, marker);
+
                             infoWindows.push(infowindow);
+
+                            console.log("마커 클릭했다");
+
+                            $.ajax({
+                                url: "/storeinfo",
+                                type: "GET",
+                                data: {
+                                    bplcNm: bplcNm
+                                },
+                                success: function (response) {
+                                    console.log("전송 성공");
+                                    console.log(response);
+                                    upateInfo(response);
+                                },
+                                error: function (xhr, status, error) {
+                                    console.log('전송 실패');
+                                    console.log(error);
+                                    console.log(status);
+
+                                }
+                            })
+
+                            console.log(marker.getPosition()); // 좌표 출력 --> 나옴
+                            console.log(bplcNm); // 이름 출력 --> 나옴
+                            infowindow.open(map, marker);
+
                         });
+
 
                     }
 
@@ -410,6 +496,34 @@
         }
     });
 
+    function upateInfo(store) {
+        var storeinfo = document.getElementById("storeinfo");
+        storeinfo.innerHTML = ""; // 정보창 내용 초기화
+
+        // 정보창 내용 추가
+        var bplcNm = document.createElement("li");
+        bplcNm.innerHTML = "<span>상호명:</span><span>" + store.bplcNm + "</span>";
+        storeinfo.appendChild(bplcNm);
+
+        var uptaeNm = document.createElement("li");
+        uptaeNm.innerHTML = "<span>업체구분:</span><span>" + store.uptaeNm + "</span>";
+        storeinfo.appendChild(uptaeNm);
+
+        var rdnWhlAddr = document.createElement("li");
+        rdnWhlAddr.innerHTML = "<span>주소:</span><span>" + store.rdnWhlAddr + "</span>";
+        storeinfo.appendChild(rdnWhlAddr);
+
+        var dtlStateNm = document.createElement("li");
+        dtlStateNm.innerHTML = "<span>영업상태:</span><span>" + store.dtlStateNm + "</span>";
+        storeinfo.appendChild(dtlStateNm);
+
+        var siteTel = document.createElement("li");
+        if (siteTel !== null) {
+            siteTel.innerHTML = "<span>전화번호:</span><span>" + store.siteTel + "</span>";
+        } else
+            siteTel.innerHTML = "<span>전화번호</span><span>등록된 전화번호 정보가 없습니다</span>";
+        storeinfo.appendChild(siteTel);
+    }
 
 </script>
 </body>

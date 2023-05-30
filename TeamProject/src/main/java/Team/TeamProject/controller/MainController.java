@@ -1,9 +1,11 @@
 package Team.TeamProject.controller;
 
 import Team.TeamProject.dto.StoreDto;
+import Team.TeamProject.entity.Store;
 import Team.TeamProject.service.StoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -40,4 +42,13 @@ public class MainController {
         return storeInfo;
     }
 
+    @GetMapping("/storeinfo")
+    @ResponseBody
+    public StoreDto sendCafeInfo(@RequestParam("bplcNm") String bplcNm, Model model) {
+
+        StoreDto store = storeService.sendStoreInfo(bplcNm);
+
+        model.addAttribute("store",store);
+        return store;
+    }
 }
