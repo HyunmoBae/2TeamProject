@@ -44,9 +44,9 @@ public class MainController {
 
     @GetMapping("/storeinfo")
     @ResponseBody
-    public StoreDto sendCafeInfo(@RequestParam("bplcNm") String bplcNm, Model model) {
+    public List<StoreDto> sendCafeInfo(@RequestParam("bplcNm") String bplcNm, Model model) {
 
-        StoreDto store = storeService.sendStoreInfo(bplcNm);
+        List<StoreDto> store = storeService.sendStoreInfo(bplcNm);
 
         model.addAttribute("store",store);
         return store;

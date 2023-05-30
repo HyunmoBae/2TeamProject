@@ -143,23 +143,68 @@
                         // 받은 데이터를 반복하면서 <li> 요소 추가
                         for (var i = 0; i < storeList.length; i++) {
                             var store = storeList[i];
+                            var x = store.x; // 가게 이름 변수
+                            var y = store.y; // 가게 이름 변수
 
-                            if (store.dtlStateNm == "영업"){
+                            if (store.dtlStateNm == "영업") {
+                                var bplcNm = store.bplcNm; // 가게 이름 변수
+
                                 var listItem = $("<li></li>");
 
                                 // <li> 요소 내용 구성
                                 listItem.append('<span class="item"></span>');
                                 listItem.append('<div class="info">' +
-                                    '<h5>' + store.bplcNm + '</h5>' +
-                                    '<span>' + store.uptaeNm + '</span><br>' +
-                                    '<span>' + store.rdnWhlAddr + '</span><br>' +
-                                    '<span class="jibun gray">' + store.siteWhlAddr + '</span><br>' +
-                                    '<span class="tel">' + store.siteTel + '</span>' +
-                                    '<hr>'+
+                                    '<h5 id="test111">' + bplcNm + '</h5>' +
+                                    '<hr>' +
                                     '</div>');
 
                                 // <li> 요소를 <ul>에 추가
                                 placesList.append(listItem);
+
+                                // 클릭 이벤트 리스너 추가
+                                listItem.on('click', (function(bplcNm,y,x) {
+                                    return function() {
+
+                                        // 마커가 표시될 위치입니다
+                                        var markerPosition = new kakao.maps.LatLng(y,x);
+
+                                        // 마커를 생성합니다
+                                        var marker = new kakao.maps.Marker({
+                                            position: markerPosition // 좌표값 저장되어있으니
+                                        });
+
+                                        var infowindow = new kakao.maps.InfoWindow({
+                                            content: bplcNm, // 가게 이름을 인포윈도우 내용으로 설정합니다
+                                            removable: true // removeable 속성을 true로 설정하여 닫기 버튼을 표시합니다
+                                        });
+
+                                        infoWindows.push(infowindow);
+                                        infowindow.open(map, marker);
+
+                                        moveToLocation(y,x);
+
+                                        $.ajax({
+                                            url: "/storeinfo",
+                                            type: "GET",
+                                            data: {
+                                                bplcNm: bplcNm
+                                            },
+                                            success: function (response) {
+                                                document.getElementById("menu_wrap2").style.display = "block";
+                                                console.log("전송 성공");
+                                                console.log(response[0]);
+                                                upateInfo(response[0]);
+                                            },
+                                            error: function (xhr, status, error) {
+                                                console.log('전송 실패');
+                                                console.log(error);
+                                                console.log(status);
+
+                                            }
+                                        })
+
+                                    };
+                                })(bplcNm,y,x));
                             }
                         }
                     }else{
@@ -167,21 +212,66 @@
                             var store = storeList[i];
 
                             if (store.dtlStateNm == "폐업"){
+                                var bplcNm = store.bplcNm; // 가게 이름 변수
+                                var x = store.x; // 가게 이름 변수
+                                var y = store.y; // 가게 이름 변수
+
                                 var listItem = $("<li></li>");
 
                                 // <li> 요소 내용 구성
                                 listItem.append('<span class="item"></span>');
                                 listItem.append('<div class="info">' +
-                                    '<h5>' + store.bplcNm + '</h5>' +
-                                    '<span>' + store.uptaeNm + '</span><br>' +
-                                    '<span>' + store.rdnWhlAddr + '</span><br>' +
-                                    '<span class="jibun gray">' + store.siteWhlAddr + '</span><br>' +
-                                    '<span class="tel">' + store.siteTel + '</span>' +
+                                    '<h5 id="test111">' + store.bplcNm + '</h5>' +
                                     '<hr>'+
                                     '</div>');
 
                                 // <li> 요소를 <ul>에 추가
                                 placesList.append(listItem);
+
+                                // 클릭 이벤트 리스너 추가
+                                listItem.on('click', (function(bplcNm,y,x) {
+                                    return function() {
+
+                                        // 마커가 표시될 위치입니다
+                                        var markerPosition = new kakao.maps.LatLng(y,x);
+
+                                        // 마커를 생성합니다
+                                        var marker = new kakao.maps.Marker({
+                                            position: markerPosition // 좌표값 저장되어있으니
+                                        });
+
+                                        var infowindow = new kakao.maps.InfoWindow({
+                                            content: bplcNm, // 가게 이름을 인포윈도우 내용으로 설정합니다
+                                            removable: true // removeable 속성을 true로 설정하여 닫기 버튼을 표시합니다
+                                        });
+
+                                        infoWindows.push(infowindow);
+                                        infowindow.open(map, marker);
+
+                                        moveToLocation(y,x);
+
+                                        $.ajax({
+                                            url: "/storeinfo",
+                                            type: "GET",
+                                            data: {
+                                                bplcNm: bplcNm
+                                            },
+                                            success: function (response) {
+                                                document.getElementById("menu_wrap2").style.display = "block";
+                                                console.log("전송 성공");
+                                                console.log(response[0]);
+                                                upateInfo(response[0]);
+                                            },
+                                            error: function (xhr, status, error) {
+                                                console.log('전송 실패');
+                                                console.log(error);
+                                                console.log(status);
+
+                                            }
+                                        })
+
+                                    };
+                                })(bplcNm,y,x));
                             }
                         }
                     }
@@ -223,9 +313,13 @@
                     placesList.empty();
 
                     if (state == 1){
+
                         // 받은 데이터를 반복하면서 <li> 요소 추가
                         for (var i = 0; i < storeList.length; i++) {
                             var store = storeList[i];
+                            var x = store.x;
+                            var y = store.y;
+                            var bplcNm = store.bplcNm;
 
                             if (store.dtlStateNm == "영업"){
                                 var listItem = $("<li></li>");
@@ -233,15 +327,29 @@
                                 // <li> 요소 내용 구성
                                 listItem.append('<span class="item"></span>');
                                 listItem.append('<div class="info">' +
-                                    '<h5>' + store.bplcNm + '</h5>' +
-                                    '<span>' + store.uptaeNm + '</span><br>' +
-                                    '<span>' + store.rdnWhlAddr + '</span><br>' +
-                                    '<span class="jibun gray">' + store.siteWhlAddr + '</span><br>' +
-                                    '<span class="tel">' + store.siteTel + '</span>' +
+                                    '<h5 id="test111">' + bplcNm + '</h5>' +
+                                    '<hr>' +
                                     '</div>');
 
                                 // <li> 요소를 <ul>에 추가
                                 placesList.append(listItem);
+
+                                var markerPosition = new kakao.maps.LatLng(y,x);
+
+                                // 마커를 생성합니다
+                                var marker = new kakao.maps.Marker({
+                                    position: markerPosition // 좌표값 저장되어있으니
+                                });
+
+                                var infowindow = new kakao.maps.InfoWindow({
+                                    content: bplcNm, // 가게 이름을 인포윈도우 내용으로 설정합니다
+                                    removable: true // removeable 속성을 true로 설정하여 닫기 버튼을 표시합니다
+                                });
+
+                                // console.log(infowindow);
+
+                                infoWindows.push(infowindow);
+                                infowindow.open(map, marker);
                             }
 
                         }
@@ -361,8 +469,6 @@
 
                     // 클릭 이벤트 리스너를 추가하는 함수 정의
                     function addClickListener(marker, bplcNm) {
-                        document.getElementById("menu_wrap2").style.display = "block";
-
                         kakao.maps.event.addListener(marker, 'click', function () {
                             var infowindow = new kakao.maps.InfoWindow({
                                 content: bplcNm, // 가게 이름을 인포윈도우 내용으로 설정합니다
@@ -371,6 +477,9 @@
                             });
 
                             infoWindows.push(infowindow);
+                            infowindow.open(map, marker);
+
+
 
                             $.ajax({
                                 url: "/storeinfo",
@@ -380,8 +489,8 @@
                                 },
                                 success: function (response) {
                                     console.log("전송 성공");
-                                    console.log(response);
-                                    upateInfo(response);
+                                    console.log(response[0]);
+                                    upateInfo(response[0]);
                                 },
                                 error: function (xhr, status, error) {
                                     console.log('전송 실패');
@@ -390,8 +499,6 @@
 
                                 }
                             })
-
-                            infowindow.open(map, marker);
 
                         });
 
@@ -440,8 +547,8 @@
                                 },
                                 success: function (response) {
                                     console.log("전송 성공");
-                                    console.log(response);
-                                    upateInfo(response);
+                                    console.log(response[0]);
+                                    upateInfo(response[0]);
                                 },
                                 error: function (xhr, status, error) {
                                     console.log('전송 실패');
@@ -494,9 +601,13 @@
         if (this.checked) {
             // 스위치가 켜진 경우에 대한 동작
             state = 1;
+            document.getElementById("menu_wrap").style.display = "none";
+            document.getElementById("menu_wrap2").style.display = "none";
         } else {
             // 스위치가 꺼진 경우에 대한 동작
             state = 0;
+            document.getElementById("menu_wrap").style.display = "none";
+            document.getElementById("menu_wrap2").style.display = "none";
         }
     });
 
@@ -531,7 +642,11 @@
         } else
             siteTel.innerHTML = "<span>전화번호</span><span>등록된 전화번호 정보가 없습니다</span>";
         storeinfo.appendChild(siteTel);
+
+
     }
+
+
 
 </script>
 </body>

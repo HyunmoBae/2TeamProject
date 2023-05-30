@@ -10,5 +10,5 @@ import java.util.List;
 public interface StoreRepository extends JpaRepository<Store,Long> {
     List<Store> findAllByuptaeNm(String uptae);
     List<Store> findBybplcNmContaining(String storeName);
-    Store findBybplcNm(String bplcNm);
+    List<Store> findBybplcNm(String bplcNm);
 }
