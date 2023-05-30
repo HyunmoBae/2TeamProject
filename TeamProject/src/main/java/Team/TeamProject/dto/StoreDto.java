@@ -2,11 +2,7 @@ package Team.TeamProject.dto;
 
 import Team.TeamProject.entity.Interest;
 import Team.TeamProject.entity.Store;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import lombok.*;
 
 @Data
 @NoArgsConstructor
@@ -28,9 +24,6 @@ public class StoreDto {
     private Double x; //x좌표
     private Double y; //y좌표
     private String siteTel; //전화번호
-    private Interest interest; //관심
-
-    // 개방자치단체코드. 데이터갱신일자, 인허가취소일자 제외
 
 
     public StoreDto StoreEntityToDto(Store store){
@@ -51,6 +44,4 @@ public class StoreDto {
 
         return dto;
     }
-
 }
-

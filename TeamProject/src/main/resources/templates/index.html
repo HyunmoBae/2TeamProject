@@ -1,46 +1,44 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
-    <meta name="description" content=""/>
-    <meta name="author" content=""/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
     <title>상크스</title>
     <!-- Favicon-->
-    <link rel="icon" type="image/x-icon" th:href="@{assets/favicon.ico}"/>
+    <link rel="icon" type="image/x-icon" th:href="@{assets/favicon.ico}" />
     <!-- Bootstrap icons-->
-    <link th:href="@{https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css}" rel="stylesheet"/>
+    <link th:href="@{https://cdn.jsdelivr.net/npm/bootstrap-icons=1.10.0/font/bootstrap-icons.css}" rel="stylesheet" />
     <!-- Core theme CSS (includes Bootstrap)-->
-    <link th:href="@{css/index_styles.css}" rel="stylesheet"/>
+    <link th:href="@{css/index_styles.css}" rel="stylesheet" />
     <!-- JQuery -->
     <script th:src="@{https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js}"></script>
-    <!--    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>-->
 </head>
 <body>
 <!-- Navigation-->
 <div th:replace="/fragments/header.html :: fragment-header"></div>
 <!-- search -->
 <nav class="navbar navbar-expand-lg">
-    <div class="container px-4 px-lg-5">
-
-        <!--검색폼-->
+    <div class="container px-4 px-lg-5" style="margin-left: -30px;">
+        <!-- 검색 폼 -->
         <form class="d-flex" role="search" id="searchForm">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+            <input class="form-control me-2" type="search" placeholder="가게 이름을 입력하세요" aria-label="Search" id="searchInput">
             <button class="btn btn-outline-dark" type="submit">Search</button>
         </form>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent"></div>
+
         <!-- 지도 위에 표시될 마커 카테고리 -->
-        <div class="category-wrapper">
+        <div class="category-wrapper ms-auto">
             <button class="category-button" id="커피숍">카페</button>
-            <button class="category-button" id="한식">한식</button>
-            <button class="category-button" id="일식">일식</button>
-            <button class="category-button" id="중국식">중식</button>
             <button class="category-button" id="통닭(치킨)">치킨</button>
-            <button class="category-button" id="pizza">피자</button>
-            <button class="category-button" id="분식">분식</button>
+            <button class="category-button" id="일식">일식집</button>
+            <button class="category-button" id="중국식">중국집</button>
+            <button class="category-button" id="한식">한식집</button>
+            <button class="category-button" id="분식">분식집</button>
             <button class="category-button" id="편의점">편의점</button>
-            <button class="category-button" id="location">현위치</button>
+            <button class="category-button" id="location"> 내 위치 </button>
         </div>
 
         &nbsp;&nbsp;&nbsp;폐업&nbsp;
@@ -51,32 +49,18 @@
         &nbsp;영업
     </div>
 </nav>
-<!-- Section-->
-<!-- 카카오 지도부분-->
+
+<!-- section -->
 <section class="py-4">
 
-    <div class="map_wrap">
+    <div id="mapwrap">
+        <!-- 지도가 표시될 div -->
         <div id="map" style="width:100%;height:600px;"></div>
-        <!--가게 정보 (전체 리스트 출력)-->
+            <div id="menu_wrap" class="bg_white">
+                <ul id="placesList"></ul>
+            </div>
         <div id="menu_wrap2" class="bg_white">
-            <!--            <div class="option">-->
-            <!--                <div>-->
-            <!--                    <form onsubmit="searchPlaces(); return false;">-->
-            <!--                        키워드 : <input type="text" value="검색어 입력" id="keyword" size="15">-->
-            <!--                        <button type="submit">검색하기</button>-->
-            <!--                    </form>-->
-            <!--                </div>-->
-            <!--            </div>-->
-            <hr>
-            <ul id="placesList"></ul>
-            <div id="pagination"></div>
-        </div>
-
-
-        <!--가게 상세 정보-->
-        <div id="menu_wrap" class="bg_white">
             <div class="option">
-                <hr/>
                 <div class="button-container">
                     <form id="storeinfo">
                         <li id="bplcNm">
@@ -100,53 +84,41 @@
                             <span>전화번호:</span>
                             <span></span>
                         </li>
-
                     </form>
                 </div>
             </div>
         </div>
-        <script type="text/javascript"
-                src="//dapi.kakao.com/v2/maps/sdk.js?appkey=406784a1fe10d8f90dc9afa5b43d84c9"></script>
-        <script>
-            var mapContainer = document.getElementById('map'), // 지도를 표시할 div
-                mapOption = {
-                    // 좌표는 위도 (y) , 경도 (x) 로 되어있음.
-                    center: new kakao.maps.LatLng(35.88662909733128, 128.6355186755777), // 지도의 중심좌표
-                    level: 3 // 지도의 확대 레벨
-                };
-
-            // 지도를 표시할 div와  지도 옵션으로  지도를 생성합니다
-            var map = new kakao.maps.Map(mapContainer, mapOption);
-
-        </script>
     </div>
+
+
+
 </section>
 <!-- Footer-->
 <div th:replace="/fragments/footer.html :: fragment-footer"></div>
 <!-- Bootstrap core JS-->
-<script th:src="@{https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js}"></script>
-
-<!--버튼 클릭시 이벤트-->
+<script th:src="@{https://cdn.jsdelivr.net/npm/bootstrap=5.2.3/dist/js/bootstrap.bundle.min.js}"></script>
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=db639de31c3c82f94d530caff88b4d6d"></script>
 <script th:inline="javascript">
 
-    // 모델 데이터 가져오기
-    var storeList = /*[[${storeList}]]*/ {};
+    var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+        mapOption = {
+            center: new kakao.maps.LatLng(35.88662909733128, 128.6355186755777), // 지도의 중심좌표
+            level: 3 // 지도의 확대 레벨
+        };
+
+    // 지도를 생성합니다
+    var map = new kakao.maps.Map(mapContainer, mapOption);
+    // 마커와 인포윈도우 배열을 생성합니다.
     var markers = [],
         infoWindows = [],
         state = 0;
 
-    /* 카페 마커 찍는 부분*/
+    //클릭한 업태를 표시해주는 함수
     $(document).ready(function () {
-        // 버튼 클릭 이벤트 핸들러 등록
+        // 테스트 버튼 클릭 이벤트 핸들러 등록
         $(".category-button").click(function () {
-            var buttonId = $(this).attr("id");
+            var buttonId =$(this).attr("id");
             var url = "/uptae?uptae=" + buttonId;
-
-
-            console.log(buttonId + " 가게 정보 불러오기 버튼 클릭 했다.");
-
-            hideMarkers();
-            hideInfoWindows();
 
             // Ajax GET 요청으로 해당업태의 정보 받아오고 왼쪽 list에 보여주기
             $.ajax({
@@ -161,35 +133,33 @@
                     // 이전에 표시된 내용 제거
                     placesList.empty();
 
-                    if (state == 1) {
+                    if (state == 1){
                         // 받은 데이터를 반복하면서 <li> 요소 추가
                         for (var i = 0; i < storeList.length; i++) {
                             var store = storeList[i];
-                            // console.log(store); --> 나옴
 
-                            if (store.dtlStateNm == "영업") {
+                            if (store.dtlStateNm == "영업"){
+                            var listItem = $("<li></li>");
 
-                                var listItem = $("<li></li>");
+                            // <li> 요소 내용 구성
+                            listItem.append('<span class="item"></span>');
+                            listItem.append('<div class="info">' +
+                                '<h5>' + store.bplcNm + '</h5>' +
+                                '<span>' + store.uptaeNm + '</span><br>' +
+                                '<span>' + store.rdnWhlAddr + '</span><br>' +
+                                '<span class="jibun gray">' + store.siteWhlAddr + '</span><br>' +
+                                '<span class="tel">' + store.siteTel + '</span>' +
+                                '</div>');
 
-                                // <li> 요소 내용 구성
-                                listItem.append('<span class="item"></span>');
-                                listItem.append('<div class="info">' +
-                                    '<h5>' + store.bplcNm + '</h5>' +
-                                    '<span>' + store.uptaeNm + '</span><br>' +
-                                    '<span>' + store.rdnWhlAddr + '</span><br>' +
-                                    '<span class="jibun gray">' + store.siteWhlAddr + '</span><br>' +
-                                    '<span class="tel">' + store.siteTel + '</span>' +
-                                    '</div>');
-
-                                // <li> 요소를 <ul>에 추가
-                                placesList.append(listItem);
+                            // <li> 요소를 <ul>에 추가
+                            placesList.append(listItem);
                             }
                         }
-                    } else {
+                    }else{
                         for (var i = 0; i < storeList.length; i++) {
                             var store = storeList[i];
 
-                            if (store.dtlStateNm == "폐업") {
+                            if (store.dtlStateNm == "폐업"){
                                 var listItem = $("<li></li>");
 
                                 // <li> 요소 내용 구성
@@ -200,6 +170,7 @@
                                     '<span>' + store.rdnWhlAddr + '</span><br>' +
                                     '<span class="jibun gray">' + store.siteWhlAddr + '</span><br>' +
                                     '<span class="tel">' + store.siteTel + '</span>' +
+                                    '<br>'+
                                     '</div>');
 
                                 // <li> 요소를 <ul>에 추가
@@ -222,15 +193,151 @@
         });
     });
 
+    //검색 결과를 보여주는 함수
+    $(document).ready(function (){
+        // 폼 제출 이벤트 핸들러 등록
+        $("#searchForm").submit(function (event){
+            event.preventDefault(); // 기본 제출 동작 방지
+
+            //검색어 가져오기
+            var storeName = $("#searchInput").val();
+
+            $.ajax({
+                url: "/search?storeName=" + storeName,
+                method: "GET",
+                success: function (response){
+                    var storeList = response; // 받은 데이터를 JavaScript 변수에 할당
+
+                    // 데이터를 표시할 <ul> 요소 선택
+                    var placesList = $("#placesList");
+
+                    // 이전에 표시된 내용 제거
+                    placesList.empty();
+
+                    if (state == 1){
+                        // 받은 데이터를 반복하면서 <li> 요소 추가
+                        for (var i = 0; i < storeList.length; i++) {
+                            var store = storeList[i];
+
+                            if (store.dtlStateNm == "영업"){
+                                var listItem = $("<li></li>");
+
+                                // <li> 요소 내용 구성
+                                listItem.append('<span class="item"></span>');
+                                listItem.append('<div class="info">' +
+                                    '<h5>' + store.bplcNm + '</h5>' +
+                                    '<span>' + store.uptaeNm + '</span><br>' +
+                                    '<span>' + store.rdnWhlAddr + '</span><br>' +
+                                    '<span class="jibun gray">' + store.siteWhlAddr + '</span><br>' +
+                                    '<span class="tel">' + store.siteTel + '</span>' +
+                                    '</div>');
+
+                                // <li> 요소를 <ul>에 추가
+                                placesList.append(listItem);
+                            }
+
+                        }
+                    }else{
+                        // 받은 데이터를 반복하면서 <li> 요소 추가
+                        for (var i = 0; i < storeList.length; i++) {
+                            var store = storeList[i];
+
+                            if (store.dtlStateNm == "폐업"){
+                                var listItem = $("<li></li>");
+
+                                // <li> 요소 내용 구성
+                                listItem.append('<span class="item"></span>');
+                                listItem.append('<div class="info">' +
+                                    '<h5>' + store.bplcNm + '</h5>' +
+                                    '<span>' + store.uptaeNm + '</span><br>' +
+                                    '<span>' + store.rdnWhlAddr + '</span><br>' +
+                                    '<span class="jibun gray">' + store.siteWhlAddr + '</span><br>' +
+                                    '<span class="tel">' + store.siteTel + '</span>' +
+                                    '</div>');
+
+                                // <li> 요소를 <ul>에 추가
+                                placesList.append(listItem);
+                            }
+
+                        }
+                    }
+                    hideMarkers();
+                    hideInfoWindows();
+                    processUptaeInfo(response); // 받은 데이터 처리하는 함수 호출 및 마커찍기.
+                    moveToLocation(storeList[0].y, storeList[0].x);
+                },
+                error: function (xhr, status, error){
+                    console.log("요청실패" + error);
+                }
+            })
+        })
+    })
+
+    //현재 위치 찍는 함수
+    $(document).ready(function () {
+        $("#location").click(function () {
+
+            // HTML5의 geolocation으로 사용할 수 있는지 확인합니다
+            if (navigator.geolocation) {
+
+                // GeoLocation을 이용해서 접속 위치를 얻어옵니다
+                navigator.geolocation.getCurrentPosition(function (position) {
+
+                    var lat = position.coords.latitude, // 위도
+                        lon = position.coords.longitude; // 경도
+
+                    var locPosition = new kakao.maps.LatLng(lat, lon), // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
+                        message = '<div style="padding:5px;">사용자의 현재위치</div>'; // 인포윈도우에 표시될 내용입니다
+
+                    // 마커와 인포윈도우를 표시합니다
+                    displayMarker(locPosition, message);
+
+                });
+
+            } else { // HTML5의 GeoLocation을 사용할 수 없을때 마커 표시 위치와 인포윈도우 내용을 설정합니다
+
+                var locPosition = new kakao.maps.LatLng(33.450701, 126.570667),
+                    message = 'geolocation을 사용할수 없어요..'
+
+                displayMarker(locPosition, message);
+            }
+
+            // 지도에 마커와 인포윈도우를 표시하는 함수입니다
+            function displayMarker(locPosition, message) {
+
+                // 마커를 생성합니다
+                var marker = new kakao.maps.Marker({
+                    map: map,
+                    position: locPosition
+                });
+
+                var iwContent = message, // 인포윈도우에 표시할 내용
+                    iwRemoveable = true;
+
+                // 인포윈도우를 생성합니다
+                var infowindow = new kakao.maps.InfoWindow({
+                    content: iwContent,
+                    removable: iwRemoveable
+                });
+
+                // 인포윈도우를 마커위에 표시합니다
+                infowindow.open(map, marker);
+
+                // 지도 중심좌표를 접속위치로 변경합니다
+                map.setCenter(locPosition);
+
+            }
+        })
+    })
+
+    /* 해당 업태의 마커 찍기*/
     function processUptaeInfo(data) {
-        // Kakao 지도 API 초기화
-        if (state == 1) {
+
             // 데이터 처리
+        if (state == 1) {
             for (var i = 0; i < data.length; i++) {
                 if (data[i].dtlStateNm == "영업") {
-                    // console.log(data[i]);  cafeInfo 속성의 값 출력 -> 전송됨
                     var bplcNm = data[i].bplcNm;
-                    // console.log(cafename);
 
                     // 마커가 표시될 위치입니다
                     var markerPosition = new kakao.maps.LatLng(data[i].y, data[i].x);
@@ -252,10 +359,8 @@
                                 removable: true // removeable 속성을 true로 설정하여 닫기 버튼을 표시합니다
 
                             });
+
                             infoWindows.push(infowindow);
-
-
-                            // 마커 클릭한 경우 , 해당 가게의 정보 전송
 
                             console.log("마커 클릭했다");
 
@@ -286,81 +391,111 @@
 
 
                     }
+
+                    // 클릭 이벤트 리스너 추가
+                    addClickListener(marker, bplcNm);
                 }
-
-                // 클릭 이벤트 리스너 추가
-                addClickListener(marker, bplcNm);
             }
-        }
+        } else{
+            for (var i = 0; i < data.length; i++) {
+                if (data[i].dtlStateNm == "폐업") {
+                    var bplcNm = data[i].bplcNm;
 
-    else {
-        for (var i = 0; i < data.length; i++) {
-            if (data[i].dtlStateNm == "폐업") {
-                var bplcNm = data[i].bplcNm;
+                    // 마커가 표시될 위치입니다
+                    var markerPosition = new kakao.maps.LatLng(data[i].y, data[i].x);
 
-                // 마커가 표시될 위치입니다
-                var markerPosition = new kakao.maps.LatLng(data[i].y, data[i].x);
+                    // 마커를 생성합니다
+                    var marker = new kakao.maps.Marker({
+                        position: markerPosition // 좌표값 저장되어있으니
+                    });
 
-                // 마커를 생성합니다
-                var marker = new kakao.maps.Marker({
-                    position: markerPosition // 좌표값 저장되어있으니
-                });
+                    // 마커가 지도 위에 표시되도록 설정합니다
+                    marker.setMap(map);
+                    markers.push(marker);
 
-                // 마커가 지도 위에 표시되도록 설정합니다
-                marker.setMap(map);
-                markers.push(marker);
+                    // 클릭 이벤트 리스너를 추가하는 함수 정의
+                    function addClickListener(marker, bplcNm) {
+                        kakao.maps.event.addListener(marker, 'click', function () {
+                            var infowindow = new kakao.maps.InfoWindow({
+                                content: bplcNm, // 가게 이름을 인포윈도우 내용으로 설정합니다
+                                removable: true // removeable 속성을 true로 설정하여 닫기 버튼을 표시합니다
 
-                // 마커 클릭했을 경우, 인포윈도우 및 정보 전송
-                function addClickListener(marker, bplcNm) {
-                    kakao.maps.event.addListener(marker, 'click', function () {
-                        var infowindow = new kakao.maps.InfoWindow({
-                            content: bplcNm, // 가게 이름을 인포윈도우 내용으로 설정합니다
-                            removable: true // removeable 속성을 true로 설정하여 닫기 버튼을 표시합니다
+                            });
+
+                            infoWindows.push(infowindow);
+
+                            console.log("마커 클릭했다");
+
+                            $.ajax({
+                                url: "/storeinfo",
+                                type: "GET",
+                                data: {
+                                    bplcNm: bplcNm
+                                },
+                                success: function (response) {
+                                    console.log("전송 성공");
+                                    console.log(response);
+                                    upateInfo(response);
+                                },
+                                error: function (xhr, status, error) {
+                                    console.log('전송 실패');
+                                    console.log(error);
+                                    console.log(status);
+
+                                }
+                            })
+
+                            console.log(marker.getPosition()); // 좌표 출력 --> 나옴
+                            console.log(bplcNm); // 이름 출력 --> 나옴
+                            infowindow.open(map, marker);
 
                         });
 
-                        infoWindows.push(infowindow);
 
-                        console.log("마커 클릭했다");
+                    }
 
-                        $.ajax({
-                            url: "/storeinfo",
-                            type: "GET",
-                            data: {
-                                bplcNm: bplcNm
-                            },
-                            success: function (response) {
-                                console.log("전송 성공");
-                                console.log(response);
-                                upateInfo(response);
-                            },
-                            error: function (xhr, status, error) {
-                                console.log('전송 실패');
-                                console.log(error);
-                                console.log(status);
-
-                            }
-                        })
-
-                        console.log(marker.getPosition()); // 좌표 출력 --> 나옴
-                        console.log(bplcNm); // 이름 출력 --> 나옴
-                        infowindow.open(map, marker);
-
-                    });
-
-
-                }
-
-                // 클릭 이벤트 리스너 추가
-                addClickListener(marker, bplcNm);
-
+                    // 클릭 이벤트 리스너 추가
+                    addClickListener(marker, bplcNm);
                 }
             }
         }
     }
 
+    //마커를 닫는 함수
+    function hideMarkers(){
+        for(var i =0; i<markers.length; i++){
+            markers[i].setMap(null);
+        }
+        markers = [];
+    }
 
-    // 가게 상세 정보창 업데이트 함수
+    //인포윈도우 닫는 함수
+    function hideInfoWindows(){
+        for(var i =0; i<infoWindows.length; i++){
+            infoWindows[i].close();
+        }
+        infoWindows = [];
+    }
+
+    // 특정 좌표로 이동하는 함수
+    function moveToLocation(y, x) {
+        var moveLatLon = new kakao.maps.LatLng(y, x);
+        // 지도 중심을 이동합니다
+        map.setCenter(moveLatLon);
+    }
+
+    const toggle = document.getElementById('state');
+    toggle.addEventListener('change', function() {
+        // 스위치의 상태 변경에 따른 동작을 추가할 수 있습니다.
+        if (this.checked) {
+            // 스위치가 켜진 경우에 대한 동작
+            state = 1;
+        } else {
+            // 스위치가 꺼진 경우에 대한 동작
+            state = 0;
+        }
+    });
+
     function upateInfo(store) {
         var storeinfo = document.getElementById("storeinfo");
         storeinfo.innerHTML = ""; // 정보창 내용 초기화
@@ -390,177 +525,7 @@
         storeinfo.appendChild(siteTel);
     }
 
-    //검색 결과를 보여주는 함수
-    $(document).ready(function () {
-        // 폼 제출 이벤트 핸들러 등록
-        $("#searchForm").submit(function (event) {
-            event.preventDefault(); // 기본 제출 동작 방지
-
-            //검색어 가져오기
-            var storeName = $("#searchInput").val();
-
-            $.ajax({
-                url: "/search?storeName=" + storeName,
-                method: "GET",
-                success: function (response) {
-                    var storeList = response; // 받은 데이터를 JavaScript 변수에 할당
-
-                    // 데이터를 표시할 <ul> 요소 선택
-                    var placesList = $("#placesList");
-
-                    // 이전에 표시된 내용 제거
-                    placesList.empty();
-
-                    if (state == 1) {
-                        // 받은 데이터를 반복하면서 <li> 요소 추가
-                        for (var i = 0; i < storeList.length; i++) {
-                            var store = storeList[i];
-
-                            if (store.dtlStateNm == "영업") {
-                                var listItem = $("<li></li>");
-
-                                // <li> 요소 내용 구성
-                                listItem.append('<span class="item"></span>');
-                                listItem.append('<div class="info">' +
-                                    '<h5>' + store.bplcNm + '</h5>' +
-                                    '<span>' + store.uptaeNm + '</span><br>' +
-                                    '<span>' + store.rdnWhlAddr + '</span><br>' +
-                                    '<span class="jibun gray">' + store.siteWhlAddr + '</span><br>' +
-                                    '<span class="tel">' + store.siteTel + '</span>' +
-                                    '</div>');
-
-                                // <li> 요소를 <ul>에 추가
-                                placesList.append(listItem);
-                            }
-
-                        }
-                    } else {
-                        // 받은 데이터를 반복하면서 <li> 요소 추가
-                        for (var i = 0; i < storeList.length; i++) {
-                            var store = storeList[i];
-
-                            if (store.dtlStateNm == "폐업") {
-                                var listItem = $("<li></li>");
-
-                                // <li> 요소 내용 구성
-                                listItem.append('<span class="item"></span>');
-                                listItem.append('<div class="info">' +
-                                    '<h5>' + store.bplcNm + '</h5>' +
-                                    '<span>' + store.uptaeNm + '</span><br>' +
-                                    '<span>' + store.rdnWhlAddr + '</span><br>' +
-                                    '<span class="jibun gray">' + store.siteWhlAddr + '</span><br>' +
-                                    '<span class="tel">' + store.siteTel + '</span>' +
-                                    '</div>');
-
-                                // <li> 요소를 <ul>에 추가
-                                placesList.append(listItem);
-                            }
-
-                        }
-                    }
-                    hideMarkers();
-                    hideInfoWindows();
-                    processUptaeInfo(response); // 받은 데이터 처리하는 함수 호출 및 마커찍기.
-                    // moveToLocation(storeList[0].y, storeList[0].x);
-                },
-                error: function (xhr, status, error) {
-                    console.log("요청실패" + error);
-                }
-            })
-        })
-    })
-    /*현재 위치 찍는 부분*/
-    $(document).ready(function () {
-        $("#location").click(function () {
-
-
-// HTML5의 geolocation으로 사용할 수 있는지 확인합니다
-            if (navigator.geolocation) {
-
-                // GeoLocation을 이용해서 접속 위치를 얻어옵니다
-                navigator.geolocation.getCurrentPosition(function (position) {
-
-                    var lat = position.coords.latitude, // 위도
-                        lon = position.coords.longitude; // 경도
-
-                    var locPosition = new kakao.maps.LatLng(lat, lon), // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
-                        message = '<div style="padding:5px;">사용자의 현재위치</div>'; // 인포윈도우에 표시될 내용입니다
-
-                    // 마커와 인포윈도우를 표시합니다
-                    displayMarker(locPosition, message);
-
-                });
-
-            } else { // HTML5의 GeoLocation을 사용할 수 없을때 마커 표시 위치와 인포윈도우 내용을 설정합니다
-
-                var locPosition = new kakao.maps.LatLng(33.450701, 126.570667),
-                    message = 'geolocation을 사용할수 없어요..'
-
-                displayMarker(locPosition, message);
-            }
-
-// 지도에 마커와 인포윈도우를 표시하는 함수입니다
-            function displayMarker(locPosition, message) {
-
-                // 마커를 생성합니다
-                var marker = new kakao.maps.Marker({
-                    map: map,
-                    position: locPosition
-                });
-
-                var iwContent = message, // 인포윈도우에 표시할 내용
-                    iwRemoveable = true;
-
-                // 인포윈도우를 생성합니다
-                var infowindow = new kakao.maps.InfoWindow({
-                    content: iwContent,
-                    removable: iwRemoveable
-                });
-
-                // 인포윈도우를 마커위에 표시합니다
-                infowindow.open(map, marker);
-
-                // 지도 중심좌표를 접속위치로 변경합니다
-                map.setCenter(locPosition);
-            }
-        })
-    })
-
-    // 토글 상태 변경에 따른 동작을 추가
-    const toggle = document.getElementById('state');
-    toggle.addEventListener('change', function () {
-        // 스위치의 상태 변경에 따른 동작을 추가할 수 있습니다.
-        if (this.checked) {
-            // 스위치가 켜진 경우에 대한 동작
-            state = 1;
-        } else {
-            // 스위치가 꺼진 경우에 대한 동작
-            state = 0;
-        }
-    });
-
-    //마커를 닫는 함수
-    function hideMarkers() {
-        for (var i = 0; i < markers.length; i++) {
-            markers[i].setMap(null);
-        }
-        markers = [];
-    }
-
-    //인포윈도우 닫는 함수
-    function hideInfoWindows() {
-        for (var i = 0; i < infoWindows.length; i++) {
-            infoWindows[i].close();
-        }
-        infoWindows = [];
-    }
-
-    // 특정 좌표로 이동하는 함수
-    function moveToLocation(y, x) {
-        var moveLatLon = new kakao.maps.LatLng(y, x);
-        // 지도 중심을 이동합니다
-        map.setCenter(moveLatLon);
-    }
 </script>
 </body>
+
 </html>

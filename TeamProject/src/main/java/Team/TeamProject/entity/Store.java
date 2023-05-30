@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Builder
 @Entity
 
-public class Store {
+public class Store extends BaseEntity {
     // 가게 정보 테이블
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,28 +32,9 @@ public class Store {
     private Double y; //y좌표
     private String siteTel; //전화번호
 
-
     @ToString.Exclude
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "Interest")
     private Interest interest; //관심
 
-    public Store StoreDtoToEntity(StoreDto storedto){
-        var storeEntity = Store.builder()
-                .store_idx(storedto.getStore_idx())
-                .apvPermYmd(storedto.getApvPermYmd())
-                .bplcNm(storedto.getBplcNm())
-                .dtlStateNm(storedto.getDtlStateNm())
-                .opnSvcNm(storedto.getOpnSvcNm())
-                .rdnPostNo(storedto.getRdnPostNo())
-                .rdnWhlAddr(storedto.getRdnWhlAddr())
-                .siteTel(storedto.getSiteTel())
-                .siteWhlAddr(storedto.getSiteWhlAddr())
-                .uptaeNm(storedto.getUptaeNm())
-                .x(storedto.getX())
-                .y(storedto.getY())
-                .build();
-
-        return storeEntity;
-    }
 }
