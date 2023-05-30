@@ -5,6 +5,7 @@ import Team.TeamProject.dto.BoardDto;
 import Team.TeamProject.service.BoardService;
 import Team.TeamProject.service.ImageService;
 import Team.TeamProject.service.MemberService;
+import Team.TeamProject.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -30,6 +31,7 @@ public class BoardController {
     private final MemberService memberService;
     private final BoardService boardService;
     private final ImageService imageService;
+    private final ReviewService reviewService;
 
     /**
      * 게시글 목록 페이지
@@ -232,5 +234,16 @@ public class BoardController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    /**
+     * 댓글 저장
+     */
+    @PostMapping("/review")
+    public void saveReview(@RequestParam String review, @RequestParam Long board_idx, Principal principal) {
+        log.info("review: {}", review);
+        log.info("board_idx: {}", board_idx);
+        String id = principal.getName();
+        reviewService.saveReview(review, board_idx,id);
     }
 }

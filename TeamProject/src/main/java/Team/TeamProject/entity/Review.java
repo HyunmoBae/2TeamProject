@@ -28,7 +28,6 @@ public class Review extends BaseEntity {
 
     public static Review toReview(ReviewDto reviewDto, Member member, Board board) {
         Review review = new Review();
-        review.setReview_idx(reviewDto.getReview_idx());
         review.setContents(reviewDto.getContents());
         review.setMember(member);
         review.setBoard(board);
