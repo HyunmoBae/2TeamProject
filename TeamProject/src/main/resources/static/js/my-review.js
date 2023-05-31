@@ -1,6 +1,5 @@
 var currentPage = 0; // 현재 페이지 변수를 추가합니다.
 var page = 0;
-var categoryId = "all";
 var search = "";
 $(document).ready(function () {
     // 페이지 로드 시 게시글 목록을 비동기적으로 가져오는 함수 호출

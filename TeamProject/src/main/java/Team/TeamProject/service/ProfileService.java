@@ -1,11 +1,18 @@
 package Team.TeamProject.service;
 
 import Team.TeamProject.constant.BoardType;
+import Team.TeamProject.constant.Role;
 import Team.TeamProject.dto.BoardDto;
+import Team.TeamProject.dto.InterestDto;
+import Team.TeamProject.dto.MemberDto;
 import Team.TeamProject.dto.ReviewDto;
 import Team.TeamProject.entity.Board;
+import Team.TeamProject.entity.Interest;
+import Team.TeamProject.entity.Member;
 import Team.TeamProject.entity.Review;
 import Team.TeamProject.repository.BoardRepository;
+import Team.TeamProject.repository.InterestRepository;
+import Team.TeamProject.repository.MemberRepository;
 import Team.TeamProject.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +34,8 @@ import java.util.List;
 public class ProfileService {
     private final BoardRepository boardRepository;
     private final ReviewRepository reviewRepository;
+    private final InterestRepository interestRepository;
+    private final MemberRepository memberRepository;
 
     /**
      * 내가 쓴 글 보기
@@ -84,5 +93,32 @@ public class ProfileService {
         }
 
         return reviews.map(ReviewDto::toReviewDto);
+    }
+
+    /**
+     * 내 관심 목록 보기
+     */
+    public Page<InterestDto> getMyInterestPage(Pageable pageable, String bplcNm, String id) {
+        Page<Interest> interest;
+        if(bplcNm.isBlank()) {
+            interest = interestRepository.findByMemberId(pageable, id);
+        } else {
+            interest = interestRepository.findByMemberIdAndStoreBplcNmContaining(pageable, id, bplcNm);
+        }
+
+        return interest.map(InterestDto::toInterestDto);
+    }
+
+    /**
+     * 회원 목록 보기
+     */
+    public Page<MemberDto> getMemberPage(Pageable pageable, String memberId) {
+        Page<Member> member;
+        if(memberId.isBlank()){
+            member = memberRepository.findByRole(pageable, Role.USER);
+        } else {
+            member = memberRepository.findByRoleAndIdContaining(pageable, Role.USER, memberId);
+        }
+        return member.map(MemberDto::toMemberDto);
     }
 }

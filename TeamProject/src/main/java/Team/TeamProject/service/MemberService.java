@@ -3,13 +3,19 @@ package Team.TeamProject.service;
 import Team.TeamProject.constant.Role;
 import Team.TeamProject.dto.MemberAddressDto;
 import Team.TeamProject.dto.MemberDto;
+import Team.TeamProject.entity.Board;
+import Team.TeamProject.entity.Interest;
 import Team.TeamProject.entity.Member;
 import Team.TeamProject.entity.MemberAddress;
+import Team.TeamProject.repository.BoardRepository;
+import Team.TeamProject.repository.InterestRepository;
 import Team.TeamProject.repository.MemberAddressRepository;
 import Team.TeamProject.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -18,6 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -28,6 +35,9 @@ public class MemberService implements UserDetailsService {
     private final MemberRepository memberRepository;
     private final MemberAddressRepository memberAddressRepository;
     private final PasswordEncoder passwordEncoder;
+    private final BoardRepository boardRepository;
+    private final BoardService boardService;
+    private final InterestRepository interestRepository;
 
     /**
      * 회원가입
@@ -188,6 +198,45 @@ public class MemberService implements UserDetailsService {
     public Role getMemberRole(String id) {
         Optional<Member> optionalMember = memberRepository.findById(id);
         return optionalMember.get().getRole();
+    }
+
+    /**
+     * USER 권한을 가진 Member 회원 탈퇴
+     */
+    public void deleteMember(Long member_idx) throws Exception {
+        Optional<Member> optionalMember = memberRepository.findById(member_idx);
+        if (!optionalMember.isPresent()) {
+            throw new IllegalArgumentException("사용자를 찾을 수 없습니다.");
+        }
+        Member member = optionalMember.get();
+        List<Board> boardList = boardRepository.findByMemberId(member.getId());
+
+        if(boardList != null && !boardList.isEmpty()) {
+            if (member.getRole().equals(Role.USER)) {
+                for(Board board : boardList) {
+                    boardService.deleteBoard(board.getBoard_idx(), member.getId());
+                }
+            } else {
+                throw new IllegalArgumentException("권한이 없습니다.");
+            }
+        }
+
+        List<Interest> interestList = interestRepository.findByMember(member);
+        if(interestList != null && !interestList.isEmpty()) {
+            if (member.getRole().equals(Role.USER)) {
+                for(Interest interest : interestList) {
+                    interestRepository.delete(interest);
+                }
+            } else {
+                throw new IllegalArgumentException("권한이 없습니다.");
+            }
+        }
+
+        if (member.getRole().equals(Role.USER)) {
+            memberRepository.delete(member);
+        } else {
+            throw new IllegalArgumentException("권한이 없습니다.");
+        }
     }
 
     /**

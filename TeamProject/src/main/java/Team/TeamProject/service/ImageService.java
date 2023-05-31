@@ -21,7 +21,6 @@ import java.util.*;
 @RequiredArgsConstructor
 public class ImageService {
     private final ImageRepository imageRepository;
-    private final BoardRepository boardRepository;
     private static final String UPLOAD_PATH = "C:/summernote_image/"; // 이미지 업로드 경로 설정
     private List<Image> uploadedImages = new ArrayList<>(); // 업로드된 이미지 리스트
 

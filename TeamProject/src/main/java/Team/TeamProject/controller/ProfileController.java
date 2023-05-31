@@ -1,8 +1,10 @@
 package Team.TeamProject.controller;
 
 import Team.TeamProject.dto.BoardDto;
+import Team.TeamProject.dto.MemberDto;
 import Team.TeamProject.dto.ReviewDto;
 import Team.TeamProject.service.BoardService;
+import Team.TeamProject.service.MemberService;
 import Team.TeamProject.service.ProfileService;
 import Team.TeamProject.service.ReviewService;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,8 @@ public class ProfileController {
     private final ProfileService profileService;
     private final BoardService boardService;
     private final ReviewService reviewService;
+    private final MemberService memberService;
+
     /**
      * 내 글 보기 페이지
      */
@@ -113,5 +117,33 @@ public class ProfileController {
     @GetMapping("/member")
     public String memberView() {
         return "profile/member";
+    }
+
+    /**
+     * 회원 목록 페이지
+     */
+    @GetMapping("/member/update")
+    @ResponseBody
+    public ResponseEntity<?> getUpdatedMemberList(@PageableDefault(size = 10, direction = Sort.Direction.DESC) Pageable pageable, @RequestParam String search, Principal principal) {
+        try {
+            String id = principal.getName();
+            Page<MemberDto>  memberPage = profileService.getMemberPage(pageable, search);
+            return ResponseEntity.ok(memberPage);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    /**
+     * 회원 목록 삭제
+     */
+    @GetMapping("/member/delete")
+    public ResponseEntity<?> deleteMember(@RequestParam Long member_idx) {
+        try {
+            memberService.deleteMember(member_idx);
+            return ResponseEntity.ok("회원 삭제가 완료되었습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }
