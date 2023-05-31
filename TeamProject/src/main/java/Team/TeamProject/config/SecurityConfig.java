@@ -1,5 +1,6 @@
 package Team.TeamProject.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -18,7 +19,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.formLogin()
                 .loginPage("/sign/sign-in")
-                .defaultSuccessUrl("/")
+                .defaultSuccessUrl("/board/list")
                 .usernameParameter("id")
                 .passwordParameter("password")
                 .failureUrl("/sign/sign-in/error")
@@ -32,6 +33,8 @@ public class SecurityConfig {
         http.authorizeRequests()
                 .mvcMatchers("/css/**", "/js/**", "/img/**", "/assets/**").permitAll()
                 .mvcMatchers("/**", "/fragments/**", "/sign/**").permitAll()
+                .mvcMatchers("/css/**", "/js/**", "/img/**", "/assets/**", "/summernote/**", "/summernote_image/**", "/board/review/view").permitAll()
+                .mvcMatchers("/", "/fragments/**", "/sign/**", "/board/list/**", "/board/detail/**").permitAll()
                 .mvcMatchers("/item/**").hasAnyRole("ADMIN", "USER")
                 .anyRequest().authenticated();
 
@@ -42,7 +45,6 @@ public class SecurityConfig {
 
         return http.build();
     }
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

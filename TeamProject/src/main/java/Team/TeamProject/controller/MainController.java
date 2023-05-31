@@ -1,7 +1,6 @@
 package Team.TeamProject.controller;
 
 import Team.TeamProject.dto.StoreDto;
-import Team.TeamProject.entity.Store;
 import Team.TeamProject.service.StoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,6 +11,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 @Controller
 public class MainController {
     @Autowired
@@ -19,8 +20,8 @@ public class MainController {
 
     //메인페이지
     @GetMapping("/")
-    public String main() {
-
+    public String main(HttpSession session) {
+        session.removeAttribute("changePasswordAllowed");
         return "index";
     }
 

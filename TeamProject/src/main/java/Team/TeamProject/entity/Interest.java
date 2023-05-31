@@ -1,5 +1,6 @@
 package Team.TeamProject.entity;
 
+import Team.TeamProject.dto.InterestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,6 +23,17 @@ public class Interest extends BaseEntity {
     private boolean status;  // true = 관심, false = 관심x
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_idx")
     private Member member;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Store store;
+
+    public static Interest toInterest(InterestDto interestDto, Member member, Store store) {
+        Interest interest = new Interest();
+        interest.setStatus(interestDto.isStatus());
+        interest.setMember(member);
+        interest.setStore(store);
+
+        return interest;
+    }
 }

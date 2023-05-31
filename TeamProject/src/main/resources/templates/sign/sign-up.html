@@ -22,7 +22,7 @@
 <div th:replace="/fragments/header.html :: fragment-header"></div>
 <!-- Section-->
 <section class="py-5">
-    <main class="form-signin w-100 m-auto">
+    <main class="form-main w-100 m-auto">
         <form action="/sign/register" method="post">
             <h1 class="h3 mb-3 fw-normal">회원가입</h1>
             <!-- 아이디 -->
@@ -38,11 +38,11 @@
             </div>
             <!-- 비밀번호 -->
             <div class="form-floating">
-                <input type="password" class="form-control" id="password" name="password" placeholder="비밀번호">
+                <input type="password" class="form-control mb-2" id="password" name="password" placeholder="비밀번호">
                 <label for="Password">비밀번호</label>
             </div>
             <div class="form-floating">
-                <input type="password" class="form-control" id="repeatpassword" name="repeatpassword"
+                <input type="password" class="form-control mb-2" id="repeatpassword" name="repeatpassword"
                        placeholder="비밀번호 확인">
                 <label for="repeatpassword">비밀번호 확인</label>
                 <div class="valid-feedback" id="password_success">

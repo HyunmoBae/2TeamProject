@@ -624,46 +624,39 @@
         }
     });
 
-    // 가게 상세 정보 함수
     function upateInfo(store) {
         var storeinfo = document.getElementById("storeinfo");
         storeinfo.innerHTML = ""; // 정보창 내용 초기화
 
         // 정보창 내용 추가
         var bplcNm = document.createElement("li");
-        bplcNm.innerHTML = "<span>상호명:</span><span>" + store.bplcNm + "</span>";
+        bplcNm.innerHTML = "<span style='font-size: 20px;'>상호명:</span><span style='font-size: 20px;'>" + store.bplcNm + "</span>";
         storeinfo.appendChild(bplcNm);
 
         var uptaeNm = document.createElement("li");
-        uptaeNm.innerHTML = "<span>업체구분:</span><span>" + store.uptaeNm + "</span>";
+        uptaeNm.innerHTML = "<span style='font-size: 16px;'>업체구분:</span><span style='font-size: 16px;'>" + store.uptaeNm + "</span>";
         storeinfo.appendChild(uptaeNm);
 
         var siteWhlAddr = document.createElement("li");
-        if (store.siteWhlAddr !== null) {
-            siteWhlAddr.innerHTML = "<span>지번주소:</span><span>" + store.siteWhlAddr + "</span>";
-        }else{
-            siteWhlAddr.innerHTML = "<span>지번주소:</span><span style='color:red'>등록된 주소가 없습니다</span>";
-        }
+        siteWhlAddr.innerHTML = "<span style='font-size: 16px;'>지번주소:</span><span style='font-size: 16px;'>" + store.siteWhlAddr + "</span>";
         storeinfo.appendChild(siteWhlAddr);
 
         var rdnWhlAddr = document.createElement("li");
-        if (store.rdnWhlAddr !== null) {
-            rdnWhlAddr.innerHTML = "<span>도로명주소:</span><span>" + store.rdnWhlAddr + "</span>";
-        }else{
-            rdnWhlAddr.innerHTML = "<span>도로명주소:</span><span style='color:red'>등록된 주소가 없습니다</span>";
-        }
+        rdnWhlAddr.innerHTML = "<span style='font-size: 16px;'>도로명주소:</span><span" + (store.rdnWhlAddr === null ? " style='color:red; font-size: 16px;'" : " style='font-size: 16px;'") + ">" + (store.rdnWhlAddr === null ? "등록된 주소 정보가 없습니다." : store.rdnWhlAddr) + "</span>";
         storeinfo.appendChild(rdnWhlAddr);
+
         var dtlStateNm = document.createElement("li");
-        dtlStateNm.innerHTML = "<span>영업상태:</span><span" + (store.dtlStateNm === "폐업" ? " style='color:red'" : "") + ">" + store.dtlStateNm + "</span>";
+        dtlStateNm.innerHTML = "<span style='font-size: 16px;'>영업상태:</span><span" + (store.dtlStateNm === "폐업" ? " style='color:red; font-size: 16px;'" : " style='font-size: 16px;'") + ">" + store.dtlStateNm + "</span>";
         storeinfo.appendChild(dtlStateNm);
 
         var siteTel = document.createElement("li");
         if (store.siteTel !== null) {
-            siteTel.innerHTML = "<span>전화번호:</span><span>" + store.siteTel + "</span>";
+            siteTel.innerHTML = "<span style='font-size: 16px;'>전화번호:</span><span style='font-size: 16px;'>" + store.siteTel + "</span>";
         } else {
-            siteTel.innerHTML = "<span>전화번호:</span><span style='color:red'>등록된 전화번호 정보가 없습니다</span>";
+            siteTel.innerHTML = "<span style='font-size: 16px;'>전화번호:</span><span style='color:red; font-size: 16px;'>등록된 전화번호 정보가 없습니다</span>";
         }
         storeinfo.appendChild(siteTel);
+
 
         var toggleContainer = document.createElement("div");
         toggleContainer.innerHTML = "<input type='checkbox' id='toggle' hidden>" +
@@ -745,8 +738,6 @@
             }
         })
     })
-
-
 
 
 </script>

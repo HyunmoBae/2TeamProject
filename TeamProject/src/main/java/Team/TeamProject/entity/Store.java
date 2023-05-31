@@ -1,6 +1,5 @@
 package Team.TeamProject.entity;
 
-import Team.TeamProject.dto.StoreDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -33,8 +32,11 @@ public class Store extends BaseEntity {
     private String siteTel; //전화번호
 
     @ToString.Exclude
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "Interest")
     private Interest interest; //관심
 
+    public void saveInterest(Store store, Interest interest) {
+        store.setInterest(interest);
+    }
 }

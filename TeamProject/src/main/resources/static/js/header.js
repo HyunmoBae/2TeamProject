@@ -1,6 +1,6 @@
 $(function () {
     $("#signOut").click(function () {
-    console.log("실행확인");
+        console.log("실행확인");
         $.ajax({
             type: "POST",
             url: "/sign/logout",
@@ -12,7 +12,7 @@ $(function () {
     });
 });
 
-$(document).ready(function() {
+$(document).ready(function () {
     // 현재 페이지 URL을 가져옵니다.
     var currentPageUrl = window.location.href;
 

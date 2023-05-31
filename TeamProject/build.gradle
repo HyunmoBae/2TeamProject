@@ -27,6 +27,8 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	implementation 'org.osgeo:proj4j:0.1.0'
 	runtimeOnly 'org.springframework.boot:spring-boot-devtools'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	implementation 'commons-io:commons-io:2.6'
 }
 
 tasks.named('test') {
