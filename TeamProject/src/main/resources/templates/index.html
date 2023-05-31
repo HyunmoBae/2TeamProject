@@ -64,28 +64,28 @@
                 <div class="button-container">
                     <form id="storeinfo">
                         <li id="bplcNm">
-                            <span>상호명:</span>
+
                             <span></span>
                         </li>
                         <li id="uptaeNm">
-                            <span>업체구분:</span>
+
                             <span></span>
                         </li>
                         <!--도로명 주소 사용-->
                         <li id="rdnWhlAddr">
-                            <span>도로명주소:</span>
+
                             <span></span>
                         </li>
                         <li id="siteWhlAddr">
-                            <span>지번주소:</span>
+
                             <span></span>
                         </li>
                         <li id="dtlStateNm">
-                            <span>영업상태:</span>
+
                             <span></span>
                         </li>
                         <li id="siteTel">
-                            <span>전화번호:</span>
+
                             <span></span>
                         </li>
                     </form>
@@ -664,14 +664,15 @@
         storeinfo.appendChild(rdnWhlAddr);
 
         var dtlStateNm = document.createElement("li");
-        dtlStateNm.innerHTML = "<span>영업상태:</span><span>" + store.dtlStateNm + "</span>";
+        dtlStateNm.innerHTML = "<span>영업상태:</span><span" + (store.dtlStateNm === "폐업" ? " style='color:red'" : "") + ">" + store.dtlStateNm + "</span>";
         storeinfo.appendChild(dtlStateNm);
 
         var siteTel = document.createElement("li");
-        if (siteTel !== null) {
+        if (store.siteTel !== null) {
             siteTel.innerHTML = "<span>전화번호:</span><span>" + store.siteTel + "</span>";
-        } else
-            siteTel.innerHTML = "<span>전화번호</span><span>등록된 전화번호 정보가 없습니다</span>";
+        } else {
+            siteTel.innerHTML = "<span>전화번호:</span><span style='color:red'>등록된 전화번호 정보가 없습니다</span>";
+        }
         storeinfo.appendChild(siteTel);
 
 
