@@ -659,14 +659,15 @@
         storeinfo.appendChild(rdnWhlAddr);
 
         var dtlStateNm = document.createElement("li");
-        dtlStateNm.innerHTML = "<span>영업상태:</span><span>" + store.dtlStateNm + "</span>";
+        dtlStateNm.innerHTML = "<span>영업상태:</span><span" + (store.dtlStateNm === "폐업" ? " style='color:red'" : "") + ">" + store.dtlStateNm + "</span>";
         storeinfo.appendChild(dtlStateNm);
 
         var siteTel = document.createElement("li");
-        if (siteTel !== null) {
+        if (store.siteTel !== null) {
             siteTel.innerHTML = "<span>전화번호:</span><span>" + store.siteTel + "</span>";
-        } else
-            siteTel.innerHTML = "<span>전화번호</span><span>등록된 전화번호 정보가 없습니다</span>";
+        } else {
+            siteTel.innerHTML = "<span>전화번호:</span><span style='color:red'>등록된 전화번호 정보가 없습니다</span>";
+        }
         storeinfo.appendChild(siteTel);
 
 
