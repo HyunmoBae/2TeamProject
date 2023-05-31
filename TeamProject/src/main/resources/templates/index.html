@@ -343,6 +343,7 @@
                                 // <li> 요소를 <ul>에 추가
                                 placesList.append(listItem);
 
+                                // 리스트 클릭했을 때 (엉업)
                                 listItem.on('click', (function(bplcNm,y,x) {
                                     return function() {
 
@@ -365,6 +366,7 @@
 
                                         moveToLocation(y,x);
 
+                                        // 클릭하면 전송하는 부분
                                         $.ajax({
                                             url: "/storeinfo",
                                             type: "GET",
@@ -388,6 +390,23 @@
                                     };
                                 })(bplcNm,y,x));
 
+                                // 마커가 표시될 위치입니다
+                                var markerPosition = new kakao.maps.LatLng(y,x);
+
+                                // 마커를 생성합니다
+                                var marker = new kakao.maps.Marker({
+                                    position: markerPosition // 좌표값 저장되어있으니
+                                });
+
+                                var infowindow = new kakao.maps.InfoWindow({
+                                    content: bplcNm, // 가게 이름을 인포윈도우 내용으로 설정합니다
+                                    removable: true // removeable 속성을 true로 설정하여 닫기 버튼을 표시합니다
+                                });
+
+                                infoWindows.push(infowindow);
+                                infowindow.open(map, marker);
+
+                                moveToLocation(y,x);
 
 
                             }
@@ -415,6 +434,8 @@
 
                                 // <li> 요소를 <ul>에 추가
                                 placesList.append(listItem);
+
+                                // 리스트 클릭했을 때 (폐업)
 
                                 listItem.on('click', (function(bplcNm,y,x) {
                                     return function() {
