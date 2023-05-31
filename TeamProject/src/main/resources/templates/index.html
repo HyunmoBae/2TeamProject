@@ -193,8 +193,6 @@
                                             },
                                             success: function (response) {
                                                 document.getElementById("menu_wrap2").style.display = "block";
-                                                console.log("전송 성공");
-                                                console.log(response[0]);
                                                 upateInfo(response[0]);
                                             },
                                             error: function (xhr, status, error) {
@@ -262,8 +260,6 @@
                                             },
                                             success: function (response) {
                                                 document.getElementById("menu_wrap2").style.display = "block";
-                                                console.log("전송 성공");
-                                                console.log(response[0]);
                                                 upateInfo(response[0]);
                                             },
                                             error: function (xhr, status, error) {
@@ -303,7 +299,6 @@
 
             //검색어 가져오기
             var storeName = $("#searchInput").val();
-            // console.log("test용입니다."+storeName); -> 나옴
 
             $.ajax({
                 url: "/search?storeName=" + storeName,
@@ -314,10 +309,8 @@
                     hideInfoWindows();
                     hideMarkers();
 
-                    // console.dir(response) 배열임.
                     // 데이터를 표시할 <ul> 요소 선택
                     var placesList = $("#placesList");
-
 
                     // 이전에 표시된 내용 제거
                     placesList.empty();
@@ -336,7 +329,6 @@
                                 var x = store.x;
                                 var y = store.y;
                                 var bplcNm = store.bplcNm;
-
 
                                 var listItem = $("<li></li>");
 
@@ -378,7 +370,6 @@
                                         },
                                         success: function (response) {
                                             document.getElementById("menu_wrap2").style.display = "block";
-                                            console.log("전송 성공");
                                             upateInfo(response[0]);
                                         },
                                         error: function (xhr, status, error) {
@@ -447,7 +438,6 @@
                                         },
                                         success: function (response) {
                                             document.getElementById("menu_wrap2").style.display = "block";
-                                            console.log("전송 성공");
                                             upateInfo(response[0]);
                                         },
                                         error: function (xhr, status, error) {
@@ -513,7 +503,6 @@
                                     bplcNm: bplcNm
                                 },
                                 success: function (response) {
-                                    console.log("전송 성공");
                                     console.log(response[0]);
                                     upateInfo(response[0]);
                                 },
@@ -571,7 +560,6 @@
                                     bplcNm: bplcNm
                                 },
                                 success: function (response) {
-                                    console.log("전송 성공");
                                     console.log(response[0]);
                                     upateInfo(response[0]);
                                 },
@@ -651,13 +639,20 @@
         storeinfo.appendChild(uptaeNm);
 
         var siteWhlAddr = document.createElement("li");
-        siteWhlAddr.innerHTML = "<span>지번주소:</span><span>" + store.siteWhlAddr + "</span>";
+        if (store.siteWhlAddr !== null) {
+            siteWhlAddr.innerHTML = "<span>지번주소:</span><span>" + store.siteWhlAddr + "</span>";
+        }else{
+            siteWhlAddr.innerHTML = "<span>지번주소:</span><span style='color:red'>등록된 주소가 없습니다</span>";
+        }
         storeinfo.appendChild(siteWhlAddr);
 
         var rdnWhlAddr = document.createElement("li");
-        rdnWhlAddr.innerHTML = "<span>도로명주소:</span><span>" + store.rdnWhlAddr + "</span>";
+        if (store.rdnWhlAddr !== null) {
+            rdnWhlAddr.innerHTML = "<span>도로명주소:</span><span>" + store.rdnWhlAddr + "</span>";
+        }else{
+            rdnWhlAddr.innerHTML = "<span>도로명주소:</span><span style='color:red'>등록된 주소가 없습니다</span>";
+        }
         storeinfo.appendChild(rdnWhlAddr);
-
         var dtlStateNm = document.createElement("li");
         dtlStateNm.innerHTML = "<span>영업상태:</span><span" + (store.dtlStateNm === "폐업" ? " style='color:red'" : "") + ">" + store.dtlStateNm + "</span>";
         storeinfo.appendChild(dtlStateNm);
@@ -670,6 +665,27 @@
         }
         storeinfo.appendChild(siteTel);
 
+        var toggleContainer = document.createElement("div");
+        toggleContainer.innerHTML = "<input type='checkbox' id='toggle' hidden>" +
+            "<label for='toggle' class='toggleSwitch'>" +
+            "<span class='toggleText'>해제</span>" +
+            "<span class='toggleButton'></span>" +
+            "<span class='toggleText'>관심</span>" +
+            "</label>";
+        storeinfo.appendChild(toggleContainer);
+
+        // 버튼의 상태 변경 이벤트 처리
+        var toggle = document.getElementById('toggle');
+        toggle.addEventListener('change', function() {
+            var value = this.checked ? '관심' : '해제';
+
+            if (value == '관심'){
+                console.log('관심');
+            } else{
+                console.log('해제');
+            }
+
+        });
 
     }
 
