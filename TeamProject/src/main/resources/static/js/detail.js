@@ -1,6 +1,7 @@
 var board_idx = $("#board_idx").text();
 var id = "";
 var role = "";
+var nick = $("#nick").text();
 $(document).ready(function () {
   $.ajax({
     type: "GET",
@@ -98,8 +99,10 @@ function addReviewItem(review) {
   var contentDiv = $('<div></div>').text(review.contents);
   reviewItem.append(contentDiv);
   var infoDiv = $('<div class="d-flex"></div>');
-  if(id == review.memberDto.id) {
+  if(nick == review.memberDto.id) {
     infoDiv.append($('<div class="me-3"></div>').html("<strong>" + "작성자" + "</strong>"));
+  } else if (id == review.memberDto.id) {
+    infoDiv.append($('<div class="me-3"></div>').text("내 댓글"));
   } else {
     infoDiv.append($('<div class="me-3"></div>').text(review.memberDto.nick));
   }
@@ -187,8 +190,10 @@ function updateReviewItem(review) {
   var contentDiv = $('<div></div>').text(review.contents);
   reviewItem.append(contentDiv);
   var infoDiv = $('<div class="d-flex"></div>');
-  if (id == review.memberDto.id) {
+  if (nick == review.memberDto.id) {
     infoDiv.append($('<div class="me-3"></div>').html("<strong>" + "작성자" + "</strong>"));
+  } else if (id == review.memberDto.id) {
+    infoDiv.append($('<div class="me-3"></div>').text("내 댓글"));
   } else {
     infoDiv.append($('<div class="me-3"></div>').text(review.memberDto.nick));
   }
